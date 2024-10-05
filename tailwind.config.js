@@ -2,6 +2,15 @@
 export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
+    screens: {
+      'ssm': '375px',
+      'sm': '576px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1210px'
+      // 'xl': '1280px',
+      // '2xl': '1536px',
+    },
     extend: {
       colors: {
         //修改tailwind配置，可以在內聯使用
