@@ -4,6 +4,7 @@ import CustomerContainer from '@/layout/CustomerContainer.vue'
 import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'
 import CustomerHeaderDrawer from '@/components/customer-header/CustomerHeaderDrawer.vue'
 import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
 const isDrawerOpen = ref(false)
 const navHeight = ref(0)
 const handleDrawerOpen = () => {
@@ -34,7 +35,14 @@ const value = ref('')
         </div>
         <div class="p-3">
           <div class="rounded-3xl border w-full flex items-center">
-            <i class="pi pi-search text-2xl px-2"></i>
+            <!-- <i class="pi pi-search text-2xl px-2"></i> -->
+            <Button
+              icon="pi pi-search"
+              class="border-transparent text-neutral-950"
+              rounded
+              outlined
+              aria-label="Search"
+            />
             <InputText
               type="text"
               v-model="value"
