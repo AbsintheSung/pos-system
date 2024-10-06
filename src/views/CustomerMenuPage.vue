@@ -52,28 +52,62 @@ const value = ref('')
             />
           </div>
         </div>
-        <ul class="flex items-center p-3 gap-x-6">
-          <li class="flex-grow text-center">
-            <RouterLink to="/customer/menu/italianCoffee">義式咖啡</RouterLink>
+        <ul
+          class="flex items-center p-3 gap-x-6 transition-all overflow-x-auto whitespace-nowrap scrollbar-hide max-w-screen-sm"
+        >
+          <li class="flex-grow">
+            <RouterLink
+              class="pb-1"
+              to="/customer/menu/italianCoffee"
+              exact-active-class="link-active"
+            >
+              義式咖啡
+            </RouterLink>
           </li>
-          <li class="flex-grow text-center">
-            <RouterLink to="/customer/menu/tea">茶飲</RouterLink>
+          <li class="flex-grow">
+            <RouterLink class="pb-1" to="/customer/menu/tea" exact-active-class="link-active"
+              >茶飲</RouterLink
+            >
           </li>
-          <li class="flex-grow text-center">
-            <RouterLink to="/customer/menu/smoothies">冰沙系列</RouterLink>
+          <li class="flex-grow">
+            <RouterLink class="pb-1" to="/customer/menu/smoothies" exact-active-class="link-active">
+              冰沙系列
+            </RouterLink>
           </li>
-          <li class="flex-grow text-center">
-            <RouterLink to="/customer/menu/cake">蛋糕</RouterLink>
+          <li class="flex-grow">
+            <RouterLink class="pb-1" to="/customer/menu/cake" exact-active-class="link-active">
+              蛋糕
+            </RouterLink>
           </li>
-          <li class="flex-grow text-center">
-            <RouterLink to="/customer/menu/otherDessert">其他點心</RouterLink>
+          <li class="flex-grow">
+            <RouterLink
+              class="pb-1"
+              to="/customer/menu/otherDessert"
+              exact-active-class="link-active"
+            >
+              其他點心
+            </RouterLink>
           </li>
         </ul>
       </header>
     </template>
     <template #default>
-      <RouterView></RouterView>
+      <div class="px-3">
+        <RouterView></RouterView>
+      </div>
     </template>
   </CustomerContainer>
 </template>
-<style scoped></style>
+<style lang="scss" scoped>
+.link-active {
+  border-bottom: 1px solid $primary-700;
+  color: $primary-700;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+</style>
