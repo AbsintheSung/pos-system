@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <div class="w-full max-w-screen-sm min-h-screen mx-auto bg-white px-3 relative">
+  <div class="w-full max-w-screen-sm min-h-screen mx-auto bg-white relative">
     <slot name="header"></slot>
     <main>
       <slot></slot>

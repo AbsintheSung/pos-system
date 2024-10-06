@@ -43,7 +43,6 @@ watch(
         :showNavigators="false"
         :autoplayInterval="4000"
         :circular="true"
-        class="-mx-3"
         pt:indicatorList:class="absolute bottom-0 left-0 right-0 gap-x-4"
         pt:indicatorButton:class="rounded-full  w-3 h-3"
       >
