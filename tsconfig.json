@@ -7,10 +7,5 @@
     {
       "path": "./tsconfig.app.json"
     }
-  ],
-  "compilerOptions": {
-    // 其他選項...
-    "allowJs": true,
-    "checkJs": false
-  }
+  ]
 }
