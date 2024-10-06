@@ -19,7 +19,7 @@ const getNavHeight = (value) => {
 const value = ref('')
 </script>
 <template>
-  <CustomerContainer>
+  <CustomerContainer class="bg-primary-50">
     <template #header>
       <header>
         <CustomerHeaderNav :handleDrawerOpen="handleDrawerOpen" :getNavHeight="getNavHeight" />
@@ -34,7 +34,7 @@ const value = ref('')
           <p class="text-neutral-400">高雄市苓雅區四維三路217號</p>
         </div>
         <div class="p-3">
-          <div class="rounded-3xl border w-full flex items-center">
+          <div class="rounded-3xl border w-full flex items-center bg-white">
             <!-- <i class="pi pi-search text-2xl px-2"></i> -->
             <Button
               icon="pi pi-search"
@@ -47,11 +47,12 @@ const value = ref('')
               type="text"
               v-model="value"
               :fluid="true"
-              class="border-none border-transparent rounded-3xl px-1"
+              class="border-none border-transparent rounded-3xl px-1 shadow-none"
               placeholder="Search"
             />
           </div>
         </div>
+        <ul></ul>
       </header>
     </template>
   </CustomerContainer>
