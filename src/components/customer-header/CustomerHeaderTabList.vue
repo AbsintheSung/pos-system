@@ -1,4 +1,5 @@
 <script setup>
+// 此組件為舊的(目前暫留)，已經移動至global/CustomerOrderList
 import { ref, onMounted, computed, inject } from 'vue'
 import { useMenuStore } from '@/stores/menu.js'
 import CustomerCard from '../global/CustomerCard.vue'

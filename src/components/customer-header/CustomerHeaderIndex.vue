@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, provide, readonly } from 'vue'
+import { ref, computed } from 'vue'
 import { useScroll } from '@vueuse/core'
 import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'
 import CustomerHeaderDrawer from '@/components/customer-header/CustomerHeaderDrawer.vue'
@@ -46,8 +46,6 @@ const handleDrawerOpen = () => {
 const handleDrawerClose = () => {
   isDrawerOpen.value = false
 }
-// provide('isHeaderListFixed', readonly(isHeaderListFixed))
-// provide('isGetNavHeight', readonly(isGetNavHeight))
 defineExpose({
   isHeaderListFixed: isHeaderListFixed,
   isGetNavHeight: isGetNavHeight
