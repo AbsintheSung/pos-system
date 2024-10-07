@@ -1,6 +1,6 @@
 <script setup>
 import Card from 'primevue/card'
-import Message from 'primevue/message'
+import Chip from 'primevue/chip'
 </script>
 <template>
   <div>
@@ -13,17 +13,10 @@ import Message from 'primevue/message'
               <div class="flex gap-x-4">
                 <div class="flex-1 flex flex-col gap-y-2 min-w-0">
                   <h3 class="font-bold">經典美式咖啡</h3>
-                  <h4>
-                    <Message
-                      class="bg-primary-200 text-neutral-950 w-fit rounded-3xl px-[10px] py-[2px] outline-none"
-                      pt:content:class="p-0"
-                    >
-                      <div class="flex justify-center items-center text-[12px] gap-x-1">
-                        <i class="pi pi-star text-[12px]"></i>
-                        <p class="font-medium">特價商品不集點</p>
-                      </div>
-                    </Message>
-                  </h4>
+                  <Chip class="text-[12px] px-[10px] py-[2px] bg-primary-200">
+                    <i class="pi pi-star text-[12px]"></i>
+                    <span class="font-medium">特價商品不集點</span>
+                  </Chip>
                   <p class="text-[12px] font-medium text-neutral-500">
                     無糖 | 嚴選義式配方豆，使用中烘焙的咖啡豆，口感溫潤豐厚。
                   </p>
