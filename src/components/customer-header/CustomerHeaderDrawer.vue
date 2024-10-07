@@ -26,14 +26,16 @@ const visible = computed({
   get: () => props.isDrawerOpen,
   set: () => props.handleDrawerClose()
 })
+const navHeightStyle = computed(() => `${props.navHeight}px`)
 </script>
 <template>
   <Drawer
     v-model:visible="visible"
     :showCloseIcon="false"
     pt:header:class="hidden"
-    :pt:root:class="`max-w-[305px] border-none top-[${navHeight}px]`"
+    pt:root:class="max-w-[305px] border-none"
     pt:content:class="px-0"
+    :style="{ top: navHeightStyle }"
   >
     <ul class="flex flex-col">
       <li
@@ -46,4 +48,4 @@ const visible = computed({
     </ul>
   </Drawer>
 </template>
-<style scoped></style>
+<style lang="scss"></style>
