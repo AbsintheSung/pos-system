@@ -21,33 +21,33 @@ const router = createRouter({
       path: '/customer/menu',
       name: 'CustomerMenu',
       component: CustomerMenuPage,
-      children: [
-        {
-          path: 'italianCoffee',
-          name: 'ItalianCoffee',
-          component: () => import('@/views/customer-menu-page/ItalianCoffeePage.vue')
-        },
-        {
-          path: 'tea',
-          name: 'Tea',
-          component: () => import('@/views/customer-menu-page/TeaPage.vue')
-        },
-        {
-          path: 'smoothies',
-          name: 'Smoothies',
-          component: () => import('@/views/customer-menu-page/SmoothiesPage.vue')
-        },
-        {
-          path: 'cake',
-          name: 'Cake',
-          component: () => import('@/views/customer-menu-page/CakePage.vue')
-        },
-        {
-          path: 'otherDessert',
-          name: 'OtherDessert',
-          component: () => import('@/views/customer-menu-page/OtherDessert.vue')
-        }
-      ]
+      // children: [
+      //   {
+      //     path: 'italianCoffee',
+      //     name: 'ItalianCoffee',
+      //     component: () => import('@/views/customer-menu-page/ItalianCoffeePage.vue')
+      //   },
+      //   {
+      //     path: 'tea',
+      //     name: 'Tea',
+      //     component: () => import('@/views/customer-menu-page/TeaPage.vue')
+      //   },
+      //   {
+      //     path: 'smoothies',
+      //     name: 'Smoothies',
+      //     component: () => import('@/views/customer-menu-page/SmoothiesPage.vue')
+      //   },
+      //   {
+      //     path: 'cake',
+      //     name: 'Cake',
+      //     component: () => import('@/views/customer-menu-page/CakePage.vue')
+      //   },
+      //   {
+      //     path: 'otherDessert',
+      //     name: 'OtherDessert',
+      //     component: () => import('@/views/customer-menu-page/OtherDessert.vue')
+      //   }
+      // ]
     },
     {
       path: '/employee',

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, inject } from 'vue'
 import { useMenuStore } from '@/stores/menu.js'
 import CustomerCard from '../global/CustomerCard.vue'
 import Tabs from 'primevue/tabs'
@@ -8,6 +8,10 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 const menuStore = useMenuStore()
+// const isHeaderListFixed = inject(isHeaderListFixed)
+// const getNavHeight = inject(getNavHeight)
+// const test1 = inject(isHeaderListFixed)
+// const test2 = inject(isGetNavHeight)
 defineProps({
   isHeaderListFixed: {
     type: String,
