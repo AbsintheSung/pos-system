@@ -39,6 +39,9 @@ const navigationButtons = ref([
     liClass: ''
   }
 ])
+defineExpose({
+  nav: nav
+})
 </script>
 <template>
   <nav ref="nav" class="p-3 bg-primary-700">
