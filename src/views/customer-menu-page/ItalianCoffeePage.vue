@@ -13,7 +13,7 @@ import Chip from 'primevue/chip'
               <div class="flex gap-x-4">
                 <div class="flex-1 flex flex-col gap-y-2 min-w-0">
                   <h3 class="font-bold">經典美式咖啡</h3>
-                  <Chip class="text-[12px] px-[10px] py-[2px] bg-primary-200">
+                  <Chip class="text-[12px] px-[10px] py-[2px] bg-primary-200 w-fit">
                     <i class="pi pi-star text-[12px]"></i>
                     <span class="font-medium">特價商品不集點</span>
                   </Chip>
