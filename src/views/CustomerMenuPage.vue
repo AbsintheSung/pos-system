@@ -7,6 +7,7 @@ import CustomerHeaderDrawer from '@/components/customer-header/CustomerHeaderDra
 import CustomHeaderInfo from '@/components/customer-header/CustomHeaderInfo.vue'
 import CustomerHeaderInput from '@/components/customer-header/CustomerHeaderInput.vue'
 import CustomerHeaderList from '@/components/customer-header/CustomerHeaderList.vue'
+import CustomerHeaderTabList from '@/components/customer-header/CustomerHeaderTabList.vue'
 const { y } = useScroll(window) //使用 vueUse的函式庫，取得裝置垂直值的響應式變化
 const headerNavExpose = ref(null) //取得子組件暴露給父組件的本身dom( 用於取得dom高度，來實現垂直移動時候，部分header區塊區要固定 )
 const headerInfoExpose = ref(null) //取得子組件暴露給父組件的本身dom
@@ -27,9 +28,20 @@ const isHeaderListFixed = computed(() => {
   const navHeight = headerNavExpose.value?.navDom.clientHeight || 0
   const totalHeight = infoHeight + inputHeight
   if (y.value >= totalHeight - navHeight) {
-    return `fixed  w-full z-10 `
+    return `sticky  w-full z-10 max-w-screen-sm  `
   } else {
     return ''
+  }
+})
+const isGetNavHeight = computed(() => {
+  const infoHeight = headerInfoExpose.value?.infoDom.clientHeight || 0
+  const inputHeight = headerInputExpose.value?.inputDom.clientHeight || 0
+  const navHeight = headerNavExpose.value?.navDom.clientHeight || 0
+  const totalHeight = infoHeight + inputHeight
+  if (y.value >= totalHeight - navHeight) {
+    return navHeight
+  } else {
+    return 0
   }
 })
 const handleDrawerOpen = () => {
@@ -40,7 +52,7 @@ const handleDrawerClose = () => {
 }
 </script>
 <template>
-  <CustomerContainer>
+  <CustomerContainer class="test">
     <template #header>
       <header>
         <CustomerHeaderNav
@@ -56,18 +68,26 @@ const handleDrawerClose = () => {
         />
         <CustomHeaderInfo ref="headerInfoExpose" />
         <CustomerHeaderInput ref="headerInputExpose" />
-        <CustomerHeaderList
+        <!-- <CustomerHeaderList
           ref="headerListExpose"
           :class="isHeaderListFixed"
           :style="{ top: getNavHeight + 'px' }"
-        />
+        /> -->
       </header>
     </template>
     <template #default>
-      <div class="px-3">
+      <CustomerHeaderTabList
+        :isHeaderListFixed="isHeaderListFixed"
+        :getNavHeight="isGetNavHeight"
+      />
+      <!-- <div class="px-3">
         <RouterView></RouterView>
-      </div>
+      </div> -->
     </template>
   </CustomerContainer>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.test {
+  height: 200vh;
+}
+</style>
