@@ -8,12 +8,6 @@ const listData = ref([
   { name: '蛋糕', url: '/customer/menu/cake' },
   { name: '其他點心', url: '/customer/menu/otherDessert' }
 ])
-defineProps({
-  isHeaderListFixed: {
-    type: String,
-    default: ''
-  }
-})
 defineExpose({
   ulDom: ulDom
 })
@@ -22,7 +16,6 @@ defineExpose({
   <ul
     ref="ulDom"
     class="flex items-center p-3 gap-x-6 transition-all overflow-x-auto whitespace-nowrap scrollbar-hide max-w-screen-sm"
-    :class="isHeaderListFixed"
   >
     <li class="flex-grow" v-for="listItem in listData" :key="listItem.name">
       <RouterLink class="pb-1" :to="listItem.url" exact-active-class="link-active">

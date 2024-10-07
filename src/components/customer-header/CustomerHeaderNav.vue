@@ -1,7 +1,7 @@
 <script setup>
 import { ref, useTemplateRef } from 'vue'
 import Button from 'primevue/button'
-const nav = useTemplateRef('nav') //3.5的新api， 但3.4就有了，不確定功能是否一致
+const navDom = useTemplateRef('navDom') //3.5的新api， 但3.4就有了，不確定功能是否一致
 const props = defineProps({
   handleDrawerOpen: {
     type: Function,
@@ -17,7 +17,7 @@ const navigationButtons = ref([
     icon: 'pi pi-bars',
     label: '導覽列',
     onClick: () => {
-      props.getNavHeight(nav.value.clientHeight)
+      props.getNavHeight(navDom.value.clientHeight)
       props.handleDrawerOpen()
     },
     liClass: ''
@@ -40,11 +40,11 @@ const navigationButtons = ref([
   }
 ])
 defineExpose({
-  nav: nav
+  navDom: navDom
 })
 </script>
 <template>
-  <nav ref="nav" class="p-3 bg-primary-700">
+  <nav ref="navDom" class="p-3 bg-primary-700">
     <ul class="flex gap-x-4 items-center">
       <li v-for="button in navigationButtons" :key="button.label" :class="button.liClass">
         <Button

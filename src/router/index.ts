@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import CustomerPage from '@/views/CustomerPage.vue'
+import CustomerMenuPage from '@/views/CustomerMenuPage.vue'
 import HomeView from '../views/HomePage.vue'
 
 const router = createRouter({
@@ -13,12 +15,12 @@ const router = createRouter({
     {
       path: '/customer',
       name: 'Customer',
-      component: () => import('@/views/CustomerPage.vue')
+      component: CustomerPage
     },
     {
       path: '/customer/menu',
       name: 'CustomerMenu',
-      component: () => import('@/views/CustomerMenuPage.vue'),
+      component: CustomerMenuPage,
       children: [
         {
           path: 'italianCoffee',
