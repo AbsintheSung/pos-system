@@ -1,5 +1,5 @@
 <script setup>
-import { ref, useTemplateRef } from 'vue'
+import { useTemplateRef } from 'vue'
 const infoDom = useTemplateRef('infoDom')
 defineExpose({
   infoDom: infoDom

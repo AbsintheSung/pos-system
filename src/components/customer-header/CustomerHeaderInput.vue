@@ -11,7 +11,6 @@ defineExpose({
 <template>
   <div class="p-3" ref="inputDom">
     <div class="rounded-3xl border w-full flex items-center bg-white">
-      <!-- <i class="pi pi-search text-2xl px-2"></i> -->
       <Button
         icon="pi pi-search"
         class="border-transparent text-neutral-950 bg-white"

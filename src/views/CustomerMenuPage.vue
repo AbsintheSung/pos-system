@@ -7,13 +7,13 @@ import CustomerHeaderDrawer from '@/components/customer-header/CustomerHeaderDra
 import CustomHeaderInfo from '@/components/customer-header/CustomHeaderInfo.vue'
 import CustomerHeaderInput from '@/components/customer-header/CustomerHeaderInput.vue'
 import CustomerHeaderList from '@/components/customer-header/CustomerHeaderList.vue'
-const { y } = useScroll(window)
-const headerNavExpose = ref(null)
-const headerInfoExpose = ref(null)
-const headerListExpose = ref(null)
-const headerInputExpose = ref(null)
-const isDrawerOpen = ref(false)
-const navHeight = ref(0)
+const { y } = useScroll(window) //使用 vueUse的函式庫，取得裝置垂直值的響應式變化
+const headerNavExpose = ref(null) //取得子組件暴露給父組件的本身dom( 用於取得dom高度，來實現垂直移動時候，部分header區塊區要固定 )
+const headerInfoExpose = ref(null) //取得子組件暴露給父組件的本身dom
+const headerListExpose = ref(null) //取得子組件暴露給父組件的本身dom
+const headerInputExpose = ref(null) //取得子組件暴露給父組件的本身dom
+const isDrawerOpen = ref(false) //控制Drawer的開啟&關閉
+const navHeight = ref(0) //CustomerHeaderNav組件的 dom高度，此處是給CustomerHeaderDrawer組件使用
 const isHeaderNavFixed = computed(() => {
   if (y.value > 0) {
     return 'fixed w-full z-10'
@@ -64,14 +64,10 @@ const getNavHeight = (value) => {
       </header>
     </template>
     <template #default>
-      <div class="px-3 test">
+      <div class="px-3">
         <RouterView></RouterView>
       </div>
     </template>
   </CustomerContainer>
 </template>
-<style lang="scss" scoped>
-.test {
-  height: 200vh;
-}
-</style>
+<style lang="scss" scoped></style>
