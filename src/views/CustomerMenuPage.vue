@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useScroll } from '@vueuse/core'
 import CustomerContainer from '@/layout/CustomerContainer.vue'
 import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'
@@ -52,7 +52,7 @@ const handleDrawerClose = () => {
 }
 </script>
 <template>
-  <CustomerContainer class="test">
+  <CustomerContainer>
     <template #header>
       <header>
         <CustomerHeaderNav
@@ -86,8 +86,4 @@ const handleDrawerClose = () => {
     </template>
   </CustomerContainer>
 </template>
-<style lang="scss" scoped>
-.test {
-  height: 200vh;
-}
-</style>
+<style lang="scss" scoped></style>
