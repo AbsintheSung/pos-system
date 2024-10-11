@@ -26,7 +26,7 @@ onMounted(async () => {
 })
 </script>
 <template>
-  <div class="px-3">
+  <div class="px-3 py-6">
     <Tabs :value="menuStore.getCategory" scrollable :lazy="true">
       <TabList
         pt:prevButton:class="bg-primary-50 hidden"

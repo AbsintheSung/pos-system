@@ -7,7 +7,9 @@
     <main>
       <slot></slot>
     </main>
-    <slot name="footer"></slot>
+    <footer>
+      <slot name="footer"></slot>
+    </footer>
   </div>
 </template>
 <style scoped></style>

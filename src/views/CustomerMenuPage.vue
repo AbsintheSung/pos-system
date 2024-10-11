@@ -9,6 +9,7 @@ import CustomHeaderInfo from '@/components/customer-header/CustomHeaderInfo.vue'
 import CustomerHeaderInput from '@/components/customer-header/CustomerHeaderInput.vue'
 import CustomerContainer from '@/layout/CustomerContainer.vue'
 import CustomerOrderList from '@/components/global/CustomerOrderList.vue'
+import CustomerFooter from '@/components/global/CustomerFooter.vue'
 const isDrawerOpen = ref(false) //控制Drawer的開啟&關閉
 const { y } = useScroll(window) //使用 vueUse的函式庫，取得裝置垂直值的響應式變化
 const headerNav = ref(null)
@@ -51,6 +52,9 @@ const handleDrawerClose = () => {
     </template>
     <template #default>
       <CustomerOrderList :isHeaderListFixed="isHeaderListFixed" :getNavHeight="isGetNavHeight" />
+    </template>
+    <template #footer>
+      <CustomerFooter />
     </template>
   </CustomerContainer>
 </template>

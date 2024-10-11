@@ -24,7 +24,7 @@ const props = defineProps({
                 <p class="text-[12px] font-medium text-neutral-500">
                   {{ categoryItem.description }}
                 </p>
-                <div class="flex items-center">
+                <div class="flex items-center mt-auto">
                   <i class="pi pi-dollar text-xl"></i>
                   <p class="font-bold">{{ categoryItem.price }}</p>
                 </div>
