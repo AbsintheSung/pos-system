@@ -1,4 +1,5 @@
 <script setup>
+// 此元件不會用到-未來會移除
 import { ref, computed } from 'vue'
 import { useScroll } from '@vueuse/core'
 import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'
@@ -53,7 +54,7 @@ defineExpose({
 </script>
 <template>
   <header>
-    <CustomerHeaderNav
+    <!-- <CustomerHeaderNav
       ref="headerNavExpose"
       :handleDrawerOpen="handleDrawerOpen"
       :class="isHeaderNavFixed"
@@ -65,7 +66,7 @@ defineExpose({
       v-model:isDrawerOpen="isDrawerOpen"
     />
     <CustomHeaderInfo ref="headerInfoExpose" />
-    <CustomerHeaderInput ref="headerInputExpose" />
+    <CustomerHeaderInput ref="headerInputExpose" /> -->
     <!-- <CustomerHeaderList
           ref="headerListExpose"
           :class="isHeaderListFixed"

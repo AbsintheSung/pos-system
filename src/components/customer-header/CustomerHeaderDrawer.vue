@@ -20,6 +20,13 @@ const props = defineProps({
   handleDrawerClose: {
     type: Function,
     default: () => {}
+  },
+  maskleft: {
+    type: Number,
+    default: 0
+  },
+  maskwidth: {
+    type: Number
   }
 })
 const visible = computed({
@@ -35,14 +42,11 @@ const navHeightStyle = computed(() => `${props.navHeight}px`)
     pt:header:class="hidden"
     pt:root:class="max-w-[305px] border-none"
     pt:content:class="px-0"
-    :style="{ top: navHeightStyle }"
+    :pt:mask:style="[{ left: maskleft + 'px' }, { width: maskwidth + 'px' }]"
+    :style="[{ top: navHeightStyle }]"
   >
     <ul class="flex flex-col">
-      <li
-        class="p-4 border-b border-neutral-300"
-        v-for="listItem in MenuListData"
-        :key="listItem.name"
-      >
+      <li class="p-4 border-b border-neutral-300" v-for="listItem in MenuListData" :key="listItem.name">
         <RouterLink :to="`${listItem.url}`">{{ listItem.name }}</RouterLink>
       </li>
     </ul>
