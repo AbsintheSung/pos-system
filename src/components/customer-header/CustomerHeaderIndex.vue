@@ -1,4 +1,5 @@
 <script setup>
+// 此元件不會用到-未來會移除
 import { ref, computed } from 'vue'
 import { useScroll } from '@vueuse/core'
 import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'

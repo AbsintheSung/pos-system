@@ -48,7 +48,6 @@ const handleDrawerClose = () => {
       <CustomerHeaderNav ref="headerNav" :handleDrawerOpen="handleDrawerOpen" :class="isHeaderNavFixed" />
       <CustomHeaderInfo ref="getHeaderInfo" />
       <CustomerHeaderInput ref="getHeaderInput" />
-      <!-- <CustomerHeaderIndex ref="headerIndexExpose" /> -->
     </template>
     <template #default>
       <CustomerOrderList :isHeaderListFixed="isHeaderListFixed" :getNavHeight="isGetNavHeight" />
