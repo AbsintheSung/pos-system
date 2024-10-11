@@ -53,7 +53,7 @@ defineExpose({
 </script>
 <template>
   <header>
-    <CustomerHeaderNav
+    <!-- <CustomerHeaderNav
       ref="headerNavExpose"
       :handleDrawerOpen="handleDrawerOpen"
       :class="isHeaderNavFixed"
@@ -65,7 +65,7 @@ defineExpose({
       v-model:isDrawerOpen="isDrawerOpen"
     />
     <CustomHeaderInfo ref="headerInfoExpose" />
-    <CustomerHeaderInput ref="headerInputExpose" />
+    <CustomerHeaderInput ref="headerInputExpose" /> -->
     <!-- <CustomerHeaderList
           ref="headerListExpose"
           :class="isHeaderListFixed"

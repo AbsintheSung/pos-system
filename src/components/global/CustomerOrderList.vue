@@ -52,11 +52,7 @@ onMounted(async () => {
         </Tab>
       </TabList>
       <TabPanels pt:root:class="bg-primary-50 py-3 px-0">
-        <TabPanel
-          v-for="menuItem in menuStore.getMenuList"
-          :key="menuItem.category"
-          :value="menuItem.categoryName"
-        >
+        <TabPanel v-for="menuItem in menuStore.getMenuList" :key="menuItem.category" :value="menuItem.categoryName">
           <h3 class="text-xl font-bold py-3">{{ menuItem.categoryName }}</h3>
           <CustomerCard :getCategoryItem="menuItem.categoryItem" />
         </TabPanel>
