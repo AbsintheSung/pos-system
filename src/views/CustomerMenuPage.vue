@@ -14,11 +14,11 @@ const { y } = useScroll(window) //使用 vueUse的函式庫，取得裝置垂直
 const headerNav = ref(null)
 const headerInput = ref(null)
 const headerInfo = ref(null)
-const headerIndexExpose = ref(null)
+const customerContainer = ref(null)
 const getHeaderNav = useElementBounding(headerNav)
 const getHeaderInput = useElementBounding(headerInput)
 const getHeaderInfo = useElementBounding(headerInfo)
-
+const getHeaderContainer = useElementBounding(customerContainer)
 const isHeaderNavFixed = computed(() => (y.value > 0 ? 'fixed w-full z-10 max-w-screen-sm' : ''))
 
 const computedHeight = computed(() => getHeaderInput.height.value + getHeaderInfo.height.value - getHeaderNav.height.value)
@@ -35,18 +35,20 @@ const handleDrawerClose = () => {
 }
 </script>
 <template>
-  <CustomerContainer>
+  <CustomerContainer ref="customerContainer">
     <template #header>
       <CustomerHeaderDrawer
         :navHeight="getHeaderNav.height.value"
         :isDrawerOpen="isDrawerOpen"
         :handleDrawerClose="handleDrawerClose"
+        :maskleft="getHeaderContainer.left.value"
+        :maskwidth="getHeaderContainer.width.value"
         v-model:isDrawerOpen="isDrawerOpen"
       />
       <CustomerHeaderNav ref="headerNav" :handleDrawerOpen="handleDrawerOpen" :class="isHeaderNavFixed" />
       <CustomHeaderInfo ref="getHeaderInfo" />
       <CustomerHeaderInput ref="getHeaderInput" />
-      <CustomerHeaderIndex ref="headerIndexExpose" />
+      <!-- <CustomerHeaderIndex ref="headerIndexExpose" /> -->
     </template>
     <template #default>
       <CustomerOrderList :isHeaderListFixed="isHeaderListFixed" :getNavHeight="isGetNavHeight" />
