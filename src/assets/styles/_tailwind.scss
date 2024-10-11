@@ -5,6 +5,9 @@
 
 @layer tailwind-base {
   @tailwind base;
+  body {
+    @include Noto-Sans-TC;
+  }
 }
 
 @layer tailwind-utilities {

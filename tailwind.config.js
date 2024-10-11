@@ -11,6 +11,9 @@ export default {
       // 'xl': '1280px',
       // '2xl': '1536px',
     },
+    fontFamily: {
+      'Noto-Sans-TC': ['Noto Sans TC', 'sans-serif']
+    },
     extend: {
       colors: {
         //修改tailwind配置，可以在內聯使用
