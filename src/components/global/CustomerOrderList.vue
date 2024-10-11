@@ -31,7 +31,7 @@ onMounted(async () => {
       <TabList
         pt:prevButton:class="bg-primary-50 hidden"
         pt:nextButton:class="bg-primary-50 hidden"
-        pt:tabList:class="bg-primary-50 custom-button-active"
+        pt:tabList:class="bg-primary-50 custom-button-active "
         pt:activeBar:class="bg-primary-700"
         :class="isHeaderListFixed"
         :style="{ top: getNavHeight + 'px' }"

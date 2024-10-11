@@ -12,7 +12,7 @@ const props = defineProps({
   <ul class="flex flex-col gap-y-3">
     <li v-for="categoryItem in getCategoryItem" :key="categoryItem.productId">
       <RouterLink to="/">
-        <Card class="border-neutral-950 border" pt:body:class="p-4">
+        <Card class="border-neutral-950 border shadow-none" pt:body:class="p-4">
           <template #content>
             <div class="flex gap-x-4">
               <div class="flex-1 flex flex-col gap-y-2 min-w-0">
