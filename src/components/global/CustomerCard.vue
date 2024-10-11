@@ -17,10 +17,7 @@ const props = defineProps({
             <div class="flex gap-x-4">
               <div class="flex-1 flex flex-col gap-y-2 min-w-0">
                 <h3 class="font-bold">{{ categoryItem.name }}</h3>
-                <Chip
-                  class="text-[12px] px-[10px] py-[2px] bg-primary-200 w-fit"
-                  v-if="categoryItem.isPoint"
-                >
+                <Chip class="text-[12px] px-[10px] py-[2px] bg-primary-200 w-fit" v-if="categoryItem.isPoint">
                   <i class="pi pi-star text-[12px]"></i>
                   <span class="font-medium">特價商品不集點</span>
                 </Chip>
@@ -33,14 +30,8 @@ const props = defineProps({
                 </div>
               </div>
               <div class="flex-1 min-w-0 relative">
-                <img
-                  :src="categoryItem.imagePath"
-                  :alt="categoryItem.name"
-                  class="w-full h-full object-cover rounded-2xl"
-                />
-                <span
-                  class="absolute bg-black rounded-lg p-2 flex justify-center items-center bottom-2 right-2"
-                >
+                <img :src="categoryItem.imagePath" :alt="categoryItem.name" class="w-full h-full object-cover rounded-2xl" />
+                <span class="absolute bg-black rounded-lg p-2 flex justify-center items-center bottom-2 right-2">
                   <i class="pi pi-plus text-[12px] text-neutral-50"></i>
                 </span>
               </div>
