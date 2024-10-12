@@ -11,7 +11,7 @@ const props = defineProps({
 <template>
   <ul class="flex flex-col gap-y-3">
     <li v-for="categoryItem in getCategoryItem" :key="categoryItem.productId">
-      <RouterLink to="/">
+      <RouterLink :to="`/customer/product/${categoryItem.productId}`">
         <Card class="border-neutral-950 border shadow-none" pt:body:class="p-4">
           <template #content>
             <div class="flex gap-x-4">
