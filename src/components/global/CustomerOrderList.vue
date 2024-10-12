@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useMenuStore } from '@/stores/menu.js'
 import CustomerCard from '../global/CustomerCard.vue'
+import CustomerCardSkeleton from './CustomerCardSkeleton.vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -52,6 +53,11 @@ onMounted(async () => {
         </Tab>
       </TabList>
       <TabPanels pt:root:class="bg-primary-50 py-3 px-0">
+        <template v-if="menuStore.getMenuList.length === 0">
+          <div class="flex flex-col gap-y-3">
+            <CustomerCardSkeleton v-for="item in 6" :key="item" />
+          </div>
+        </template>
         <TabPanel v-for="menuItem in menuStore.getMenuList" :key="menuItem.category" :value="menuItem.categoryName">
           <h3 class="text-xl font-bold py-3">{{ menuItem.categoryName }}</h3>
           <CustomerCard :getCategoryItem="menuItem.categoryItem" />
