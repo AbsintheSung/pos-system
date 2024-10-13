@@ -1,5 +1,12 @@
-<script setup lang="ts">
+<script setup>
+import { ref, onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
+import { useMenuStore } from '@/stores/menu.js'
+const menuStore = useMenuStore()
+onMounted(async () => {
+  await menuStore.fetchMenuCategory()
+  await menuStore.fetchMenu()
+})
 </script>
 
 <template>

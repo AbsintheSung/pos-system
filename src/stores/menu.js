@@ -1,7 +1,10 @@
 import { defineStore } from 'pinia'
 import { fetchApi } from '@/utils/apis/apiUrl'
 import { ref, computed } from 'vue'
+import { useProductStore } from '@/stores/product.js'
+import { deepClone } from '@/utils/deepClone.ts';
 export const useMenuStore = defineStore('menu', () => {
+	const productStore = useProductStore()
 	const menuList = ref([])
 	const menuListCategory = ref([])
 
@@ -22,27 +25,10 @@ export const useMenuStore = defineStore('menu', () => {
 		try {
 			const response = await fetchApi.getMenuList()
 			menuList.value = response.data
+			productStore.addDessertOptions(response.data, '其他點心')
 		} catch (error) {
 			console.log(error)
 		}
-	}
-
-	//深拷貝
-	const deepClone = (objData) => {
-		if (objData === null || typeof objData !== 'object') {
-			return objData;
-		}
-		const result = Array.isArray(objData) ? [] : {};
-		for (let key in objData) {
-			// if(objData.hasOwnProperty(key)){
-			//     result[key] = deepClone(objData[key])
-			// }
-			if (Object.prototype.hasOwnProperty.call(objData, key)) {
-				result[key] = deepClone(objData[key])
-			}
-
-		}
-		return result;
 	}
 
 	return {
