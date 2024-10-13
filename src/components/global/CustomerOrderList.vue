@@ -19,12 +19,12 @@ defineProps({
     default: 0
   }
 })
-onMounted(async () => {
-  await menuStore.fetchMenuCategory()
-  await menuStore.fetchMenu()
-  console.log(menuStore.getMenuList)
-  console.log(menuStore.getMenuCategory)
-})
+// onMounted(async () => {
+//   await menuStore.fetchMenuCategory()
+//   await menuStore.fetchMenu()
+//   console.log(menuStore.getMenuList)
+//   console.log(menuStore.getMenuCategory)
+// })
 </script>
 <template>
   <div class="px-3 py-6">
