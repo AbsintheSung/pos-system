@@ -28,10 +28,10 @@ const userInputData = ref({
     option: '全糖'
   },
   4: {
-    option: '否'
+    option: '不要更換燕麥奶'
   },
   5: {
-    option: '否'
+    option: '不要鮮奶油'
   },
   6: {
     option: []
