@@ -20,10 +20,17 @@ async function customFetch(url: string, options: RequestOptions = {}) {
 		headers.append('Content-Type', 'application/json');
 	}
 
-	const response = await fetch(`${baseURL}${url}`, {
+	//配置反向代理
+	const response = await fetch(`${url}`, {
 		...customOptions,
 		headers,
 	});
+
+	//無配置反向代理
+	// const response = await fetch(`${baseURL}${url}`, {
+	// 	...customOptions,
+	// 	headers,
+	// });
 
 	// //處理401
 	// if (response.status === 400) {
