@@ -47,8 +47,8 @@ const handleDrawerClose = () => {
         v-model:isDrawerOpen="isDrawerOpen"
       />
       <CustomerHeaderNav ref="headerNav" :handleDrawerOpen="handleDrawerOpen" :class="isHeaderNavFixed" />
-      <CustomHeaderInfo ref="getHeaderInfo" />
-      <CustomerHeaderInput ref="getHeaderInput" />
+      <CustomHeaderInfo ref="headerInfo" />
+      <CustomerHeaderInput ref="headerInput" />
     </template>
     <template #default>
       <CustomerOrderList :isHeaderListFixed="isHeaderListFixed" :getNavHeight="isGetNavHeight" />
