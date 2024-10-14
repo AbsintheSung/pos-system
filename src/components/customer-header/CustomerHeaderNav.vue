@@ -1,8 +1,7 @@
 <script setup>
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import Button from 'primevue/button'
-const navDom = useTemplateRef('navDom') //3.5的新api， 但3.4就有了，不確定功能是否一致
 const route = useRoute()
 const router = useRouter()
 const props = defineProps({
@@ -20,7 +19,6 @@ const navigationButtons = ref([
     icon: 'pi pi-bars',
     label: '導覽列',
     onClick: () => {
-      props.getNavHeight(navDom.value.clientHeight)
       props.handleDrawerOpen()
     },
     liClass: ''
@@ -75,13 +73,9 @@ const navigation = computed(() => {
     return navigationProductButtons.value
   }
 })
-
-defineExpose({
-  navDom: navDom
-})
 </script>
 <template>
-  <nav ref="navDom" class="p-3 bg-primary-700">
+  <nav class="p-3 bg-primary-700">
     <ul class="flex gap-x-4 items-center">
       <li v-for="button in navigation" :key="button.label" :class="button.liClass">
         <Button :icon="button.icon" class="bg-neutral-50 text-neutral-950" rounded :aria-label="button.label" @click="button.onClick" />

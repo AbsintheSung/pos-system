@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { useScroll } from '@vueuse/core'
 import { useElementBounding } from '@vueuse/core'
-import CustomerHeaderIndex from '@/components/customer-header/CustomerHeaderIndex.vue'
 import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'
 import CustomerHeaderDrawer from '@/components/customer-header/CustomerHeaderDrawer.vue'
 import CustomHeaderInfo from '@/components/customer-header/CustomHeaderInfo.vue'
