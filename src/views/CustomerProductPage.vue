@@ -2,6 +2,7 @@
 import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/product.js'
+import { useOrderStore } from '@/stores/order.js'
 import Chip from 'primevue/chip'
 import RadioButton from 'primevue/radiobutton'
 import Checkbox from 'primevue/checkbox'
@@ -13,6 +14,7 @@ import CustomerProductRaddio from '@/components/global/CustomerProductRaddio.vue
 import CustomerProductCheckBox from '@/components/global/CustomerProductCheckBox.vue'
 import CustomerFooter from '@/components/global/CustomerFooter.vue'
 const productStore = useProductStore()
+const orderStore = useOrderStore()
 const route = useRoute()
 const productId = route.params.id
 const test = ref({})
@@ -93,7 +95,7 @@ const handleMinus = () => {
 const handlePlus = () => {
   userInputData.value.serving++
 }
-function handleViewMeals() {
+async function handleViewMeals() {
   const finalData = {
     guid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', // 識別碼
     orderId: 1, // 訂單編號
@@ -102,7 +104,7 @@ function handleViewMeals() {
     serving: userInputData.value.serving // 份數
   }
   test.value = finalData
-
+  // await orderStore.fetchOrderId()
   // 可以在這裡將 `finalData` 發送給後端
 }
 onMounted(async () => {
