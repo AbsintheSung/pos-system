@@ -26,12 +26,7 @@ watch(
   <CustomerContainer>
     <template #header>
       <header class="flex justify-center absolute bottom-14 left-0 right-0 z-50">
-        <RouterLink
-          to="/customer/menu"
-          class="bg-primary-700 border-none rounded-3xl py-2 px-20 text-neutral-50"
-        >
-          查看菜單
-        </RouterLink>
+        <RouterLink to="/customer/menu" class="bg-primary-700 border-none rounded-3xl py-2 px-20 text-neutral-50"> 查看菜單 </RouterLink>
       </header>
     </template>
     <template #default>
@@ -43,15 +38,15 @@ watch(
         :showNavigators="false"
         :autoplayInterval="4000"
         :circular="true"
+        pt:root:class="flex-grow"
+        pt:contentContainer="relative flex-grow"
+        pt:content="flex-grow"
+        pt:itemList="h-full"
         pt:indicatorList:class="absolute bottom-0 left-0 right-0 gap-x-4"
         pt:indicatorButton:class="rounded-full  w-3 h-3"
       >
         <template #item="slotProps">
-          <img
-            :src="slotProps.data.imgUrl"
-            :alt="slotProps.data.imgAlt"
-            class="w-full min-h-screen"
-          />
+          <img :src="slotProps.data.imgUrl" :alt="slotProps.data.imgAlt" class="w-full h-full" />
         </template>
       </Carousel>
     </template>

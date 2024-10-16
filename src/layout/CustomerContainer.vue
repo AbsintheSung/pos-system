@@ -4,7 +4,7 @@
     <header>
       <slot name="header"></slot>
     </header>
-    <main>
+    <main class="flex flex-col flex-1">
       <slot></slot>
     </main>
     <footer class="mt-auto">
