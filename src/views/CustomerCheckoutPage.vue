@@ -1,6 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
 import { useElementBounding } from '@vueuse/core'
+import { useWindowScroll } from '@vueuse/core'
 import SelectButton from 'primevue/selectbutton'
 import Button from 'primevue/button'
 import Timeline from 'primevue/timeline'
@@ -10,6 +11,8 @@ import Textarea from 'primevue/textarea'
 import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
 import CustomerContainer from '@/layout/CustomerContainer.vue'
+const windowScroll = useWindowScroll()
+const windowScrollY = ref(windowScroll.y)
 const checkoutTimeList = ref([
   { title: '訂單資訊', isActive: false, titleNum: 1 },
   { title: '付款資訊', isActive: false, titleNum: 2 },
@@ -21,12 +24,24 @@ const dineInNumber = ref(null) //內用桌號
 const reserveDate = ref('') //遇缺自取-時間(日)
 const reserveTime = ref('') //遇缺自取-時間(時分)
 const rewardPoints = ref(null) //集點
-const pickUpFoodState = ref('現場外帶')
-const pickUpFoodOptions = ref(['現場外帶', '預約自取', '內用'])
+const pickUpFoodState = ref('takeOut')
 
-const handlePickUpFood = (val) => {
-  console.log(val)
+const pickUpFoodOptions = ref([
+  { name: '現場外帶', value: 'takeOut' },
+  { name: '預約自取', value: 'reserve' },
+  { name: '內用', value: 'dineIn' }
+])
+const handlePickUpFood = () => {
+  windowScrollY.value = 0
 }
+
+const getPickUpFoodState = computed(() => ({
+  //取得 pickUpFoodState 是否相同 並根據對應屬性 回傳布林值
+  takeOutSection: pickUpFoodState.value === 'takeOut',
+  reserveSection: pickUpFoodState.value === 'reserve',
+  dineInSection: pickUpFoodState.value === 'dineIn'
+}))
+
 const todayDate = ref('')
 const twoDayDate = ref('')
 
@@ -38,7 +53,12 @@ const futureDate = new Date(now)
 futureDate.setDate(futureDate.getDate() + 2) // 將日期加2天
 twoDayDate.value = futureDate // 設置為2天後的日期
 
-console.log(getFooterButtonDiv.height.value)
+watch(
+  () => windowScrollY.value,
+  (val) => {
+    // console.log(val)
+  }
+)
 </script>
 <template>
   <CustomerContainer>
@@ -72,13 +92,15 @@ console.log(getFooterButtonDiv.height.value)
           <SelectButton
             v-model="pickUpFoodState"
             :options="pickUpFoodOptions"
+            optionLabel="name"
+            optionValue="value"
             :allowEmpty="false"
             aria-labelledby="basic"
             pt:root:class="bg-primary-50 border-transparent flex gap-x-3"
             @update:modelValue="handlePickUpFood"
           />
         </div>
-        <div class="flex flex-col gap-y-2">
+        <div class="flex flex-col gap-y-2" v-show="getPickUpFoodState.reserveSection">
           <h3>門市資訊</h3>
           <div class="bg-primary-100 font-normal p-3 rounded-xl">
             <p class="text-neutral-950">BUY咖</p>
@@ -86,7 +108,7 @@ console.log(getFooterButtonDiv.height.value)
           </div>
         </div>
       </div>
-      <div class="p-3 flex flex-col gap-y-3">
+      <div class="p-3 flex flex-col gap-y-3" v-show="getPickUpFoodState.dineInSection">
         <div class="flex items-center justify-between">
           <h2 class="font-bold text-xl">
             <label for="dineInNumber">內用桌號</label>
@@ -95,7 +117,7 @@ console.log(getFooterButtonDiv.height.value)
         </div>
         <InputText type="text" id="dineInNumber" v-model="dineInNumber" placeholder="請填寫桌號" fluid class="rounded-3xl" />
       </div>
-      <div class="p-3 flex flex-col gap-y-3">
+      <div class="p-3 flex flex-col gap-y-3" v-show="getPickUpFoodState.reserveSection">
         <div class="flex items-center justify-between">
           <h2 class="font-bold text-xl">自取時間</h2>
           <Chip label="必填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
