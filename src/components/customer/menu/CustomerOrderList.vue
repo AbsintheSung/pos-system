@@ -1,8 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
 import { useMenuStore } from '@/stores/menu.js'
-import CustomerCard from '../global/CustomerCard.vue'
-import CustomerCardSkeleton from './CustomerCardSkeleton.vue'
+import CustomerCard from '@/components/customer/menu/CustomerCard.vue'
+import CustomerCardSkeleton from '@/components/global/CustomerCardSkeleton.vue'
 import Tabs from 'primevue/tabs'
 import TabList from 'primevue/tablist'
 import Tab from 'primevue/tab'
@@ -19,12 +18,6 @@ defineProps({
     default: 0
   }
 })
-// onMounted(async () => {
-//   await menuStore.fetchMenuCategory()
-//   await menuStore.fetchMenu()
-//   console.log(menuStore.getMenuList)
-//   console.log(menuStore.getMenuCategory)
-// })
 </script>
 <template>
   <div class="px-3 py-6">
