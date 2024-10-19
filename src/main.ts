@@ -4,6 +4,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
+import zhTW from '@/locales/zh-TW.json'
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura' //目前PrimeVue提供的預設主題之一
 import Lara from '@primevue/themes/lara' //目前PrimeVue提供的預設主題之一
@@ -54,8 +55,8 @@ app.use(PrimeVue, {
 			// }
 			// `
 		},
-
-	}
+	},
+	locale: zhTW['zh-TW']
 });
 
 app.use(createPinia())
