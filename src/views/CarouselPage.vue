@@ -26,7 +26,7 @@ watch(
   <CustomerContainer>
     <template #header>
       <header class="flex justify-center absolute bottom-14 left-0 right-0 z-50">
-        <RouterLink to="/customer/menu" class="bg-primary-700 border-none rounded-3xl py-2 px-20 text-neutral-50"> 查看菜單 </RouterLink>
+        <RouterLink to="/customer" class="bg-primary-700 border-none rounded-3xl py-2 px-20 text-neutral-50"> 查看菜單 </RouterLink>
       </header>
     </template>
     <template #default>

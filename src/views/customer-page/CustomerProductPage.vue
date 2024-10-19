@@ -2,19 +2,15 @@
 import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/product.js'
-import { useOrderStore } from '@/stores/order.js'
 import Chip from 'primevue/chip'
-import RadioButton from 'primevue/radiobutton'
-import Checkbox from 'primevue/checkbox'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
-import CustomerHeaderNav from '@/components/customer-header/CustomerHeaderNav.vue'
+import CustomerHeaderNav from '@/components/customer/header/CustomerHeaderNav.vue'
 import CustomerContainer from '@/layout/CustomerContainer.vue'
-import CustomerProductRaddio from '@/components/global/CustomerProductRaddio.vue'
-import CustomerProductCheckBox from '@/components/global/CustomerProductCheckBox.vue'
-import CustomerFooter from '@/components/global/CustomerFooter.vue'
+import CustomerProductRaddio from '@/components/customer/product/CustomerProductRaddio.vue'
+import CustomerProductCheckBox from '@/components/customer/product/CustomerProductCheckBox.vue'
+import CustomerFooter from '@/components/customer/footer/CustomerFooter.vue'
 const productStore = useProductStore()
-const orderStore = useOrderStore()
 const route = useRoute()
 const productId = route.params.id
 const test = ref({})
