@@ -1,72 +1,107 @@
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useElementBounding } from '@vueuse/core'
 import { useWindowScroll } from '@vueuse/core'
 import SelectButton from 'primevue/selectbutton'
 import Button from 'primevue/button'
-import Timeline from 'primevue/timeline'
-import Card from 'primevue/card'
-import Chip from 'primevue/chip'
-import Textarea from 'primevue/textarea'
-import InputText from 'primevue/inputtext'
-import DatePicker from 'primevue/datepicker'
 import CustomerContainer from '@/layout/CustomerContainer.vue'
+import DineInInput from '@/components/customer/checkout/DineInInput.vue'
+import CustomPickUpDate from '@/components/customer/checkout/CustomPickUpDate.vue'
+import RewardsProgram from '@/components/customer/checkout/RewardsProgram.vue'
+import CheckoutOrderContent from '@/components/customer/checkout/CheckoutOrderContent.vue'
+import SpecialNeeds from '@/components/customer/checkout/SpecialNeeds.vue'
+import OrderTimeLine from '@/components/customer/checkout/OrderTimeLine.vue'
 const windowScroll = useWindowScroll()
-const windowScrollY = ref(windowScroll.y)
-const checkoutTimeList = ref([
-  { title: '訂單資訊', isActive: false, titleNum: 1 },
-  { title: '付款資訊', isActive: false, titleNum: 2 },
-  { title: '確認送出', isActive: false, titleNum: 3 }
-])
+const router = useRouter()
+const OrderStages = {
+  ORDER_INFO: 'order_info', // 訂單資訊
+  PAYMENT_INFO: 'payment_info', // 付款資訊
+  CONFIRMATION: 'confirmation' // 確認送出
+}
+const PickUpFoodState = {
+  TAKE_OUT: 'takeOut',
+  RESERVE: 'reserve',
+  DINE_IN: 'dineIn'
+}
 const footerButtonDiv = ref(null)
 const getFooterButtonDiv = useElementBounding(footerButtonDiv)
-const dineInNumber = ref(null) //內用桌號
-const reserveDate = ref(new Date()) //遇缺自取-時間(日)
-const rewardPoints = ref(null) //集點
-const pickUpFoodState = ref('takeOut')
-
-const pickUpFoodOptions = ref([
-  { name: '現場外帶', value: 'takeOut' },
-  { name: '預約自取', value: 'reserve' },
-  { name: '內用', value: 'dineIn' }
+const windowScrollY = ref(windowScroll.y)
+const orderNowStatus = ref(OrderStages.ORDER_INFO) // 初始為訂單資訊階段
+const pickUpFoodState = ref(PickUpFoodState.TAKE_OUT) //選擇按鈕狀態( 預約、自取... )
+const orderStatus = ref([
+  { title: '訂單資訊', value: OrderStages.ORDER_INFO, isActive: true, titleNum: 1 },
+  { title: '付款資訊', value: OrderStages.PAYMENT_INFO, isActive: false, titleNum: 2 },
+  { title: '確認送出', value: OrderStages.CONFIRMATION, isActive: false, titleNum: 3 }
 ])
+const pickUpFoodOptions = ref([
+  { name: '現場外帶', value: PickUpFoodState.TAKE_OUT },
+  { name: '預約自取', value: PickUpFoodState.RESERVE },
+  { name: '內用', value: PickUpFoodState.DINE_IN }
+])
+
+// 根據 pickUpFoodState 值 來判斷是否是跟 PickUpFoodState 相同，來做各組建的顯示隱藏
+const getPickUpFoodState = computed(() => ({
+  takeOutSection: pickUpFoodState.value === PickUpFoodState.TAKE_OUT,
+  reserveSection: pickUpFoodState.value === PickUpFoodState.RESERVE,
+  dineInSection: pickUpFoodState.value === PickUpFoodState.DINE_IN
+}))
+
 const handlePickUpFood = () => {
   windowScrollY.value = 0
 }
 
-const getPickUpFoodState = computed(() => ({
-  //取得 pickUpFoodState 是否相同 並根據對應屬性 回傳布林值
-  takeOutSection: pickUpFoodState.value === 'takeOut',
-  reserveSection: pickUpFoodState.value === 'reserve',
-  dineInSection: pickUpFoodState.value === 'dineIn'
-}))
+// 進入下一階段
+const handleNextStage = () => {
+  windowScrollY.value = 0
+  if (orderNowStatus.value === OrderStages.ORDER_INFO) {
+    orderNowStatus.value = OrderStages.PAYMENT_INFO
+    activateNextStage(OrderStages.PAYMENT_INFO)
+  } else if (orderNowStatus.value === OrderStages.PAYMENT_INFO) {
+    orderNowStatus.value = OrderStages.CONFIRMATION
+    activateNextStage(OrderStages.CONFIRMATION)
+  } else {
+    console.log('訂單已送出')
+    // 呼叫API提交訂單
+  }
+}
+
+// 返回上一階段
+const handlePreviousStage = () => {
+  windowScrollY.value = 0
+  if (orderNowStatus.value === OrderStages.ORDER_INFO) {
+    router.push('/customer/menu')
+  } else if (orderNowStatus.value === OrderStages.PAYMENT_INFO) {
+    orderNowStatus.value = OrderStages.ORDER_INFO
+    deactivatePreviousStage(OrderStages.ORDER_INFO)
+  }
+}
+
+// 更新訂單狀態以設置當前活動的階段
+const updateOrderStatus = (stage) => {
+  orderStatus.value.forEach((status) => {
+    status.isActive = status.value === stage
+  })
+}
+const activateNextStage = (stage) => {
+  const currentIndex = orderStatus.value.findIndex((status) => status.value === stage)
+  orderStatus.value[currentIndex].isActive = true
+}
+const deactivatePreviousStage = (stage) => {
+  const currentIndex = orderStatus.value.findIndex((status) => status.value === stage)
+  orderStatus.value[currentIndex + 1].isActive = false
+}
 </script>
 <template>
   <CustomerContainer>
     <template #header>
       <h2 class="font-semibold text-center py-3 bg-neutral-50">BUY咖啡</h2>
-    </template>
-    <template #default>
       <div class="px-3 bg-primary-100">
-        <Timeline
-          :value="checkoutTimeList"
-          layout="horizontal"
-          pt:event:class="flex-1 justify-center"
-          pt:eventContent:class="text-center text-[12px]"
-          pt:eventSeparator:class="relative "
-          pt:eventMarker:class="-right-1/2 "
-          pt:eventConnector:class="absolute -right-1/2"
-        >
-          <template #marker="slotProps">
-            <div class="rounded-full w-4 h-4 bg-primary-600 flex justify-center items-center text-[12px] mx-auto z-10">
-              {{ slotProps.item.titleNum }}
-            </div>
-          </template>
-          <template #content="slotProps">
-            {{ slotProps.item.title }}
-          </template>
-        </Timeline>
+        <OrderTimeLine :orderStatus="orderStatus" />
       </div>
+    </template>
+
+    <template #default>
       <div class="p-3 flex flex-col gap-y-2">
         <h2 class="font-bold text-xl">取餐資訊</h2>
         <div class="card flex justify-start">
@@ -81,6 +116,7 @@ const getPickUpFoodState = computed(() => ({
             @update:modelValue="handlePickUpFood"
           />
         </div>
+
         <div class="flex flex-col gap-y-2" v-show="getPickUpFoodState.reserveSection">
           <h3>門市資訊</h3>
           <div class="bg-primary-100 font-normal p-3 rounded-xl">
@@ -89,92 +125,34 @@ const getPickUpFoodState = computed(() => ({
           </div>
         </div>
       </div>
-      <div class="p-3 flex flex-col gap-y-3" v-show="getPickUpFoodState.dineInSection">
-        <div class="flex items-center justify-between">
-          <h2 class="font-bold text-xl">
-            <label for="dineInNumber">內用桌號</label>
-          </h2>
-          <Chip label="必填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-        </div>
-        <InputText type="text" id="dineInNumber" v-model="dineInNumber" placeholder="請填寫桌號" fluid class="rounded-3xl" />
-      </div>
-      <div class="p-3 flex flex-col gap-y-3" v-show="getPickUpFoodState.reserveSection">
-        <div class="flex items-center justify-between">
-          <h2 class="font-bold text-xl">自取時間</h2>
-          <Chip label="必填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-        </div>
-        <DatePicker v-model="reserveDate" showButtonBar fluid pt:root:class="custome-input-radius" pt:panel:class="mt-2" :showOtherMonths="false" />
-        <DatePicker
-          id="datepicker-timeonly"
-          v-model="reserveDate"
-          timeOnly
-          fluid
-          :stepMinute="5"
-          pt:root:class="custome-input-radius"
-          pt:panel:class="mt-2"
-        />
-      </div>
-      <div class="p-3 flex flex-col gap-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="font-bold text-xl">
-            <label for="rewardPoints">會員集點</label>
-          </h2>
-          <Chip label="選填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-        </div>
-        <InputText type="text" id="rewardPoints" v-model="rewardPoints" placeholder="請輸入手機號碼" fluid class="rounded-3xl" />
-      </div>
-      <div class="p-3 flex flex-col gap-y-3">
-        <h2 class="font-bold text-xl">訂單內容</h2>
-        <div>
-          <Card class="border-neutral-950 border shadow-none" pt:body:class="p-3">
-            <template #content>
-              <div class="flex gap-x-4">
-                <div>
-                  <img src="" alt="" class="min-w-20" />
-                </div>
-                <div class="flex flex-col gap-y-1 flex-grow">
-                  <h4 class="font-bold">經典美式咖啡</h4>
-                  <p class="text-neutral-300">少冰 | 微糖 | 大</p>
-                  <p class="font-medium">$ 120</p>
-                </div>
-                <div class="flex justify-between items-center gap-x-4">
-                  <Button
-                    icon="pi pi-minus"
-                    rounded
-                    outlined
-                    aria-label="Minus"
-                    class="bg-neutral-50 text-neutral-950 border-neutral-200 w-7 h-7 text-base"
-                  />
-                  <p>1</p>
-                  <Button
-                    icon="pi pi-plus"
-                    rounded
-                    outlined
-                    aria-label="Plus"
-                    class="bg-neutral-50 text-neutral-950 border-neutral-200 w-7 h-7 text-base"
-                  />
-                </div>
-              </div>
-            </template>
-          </Card>
-        </div>
-        <div class="flex flex-col gap-y-2">
-          <div class="flex items-center justify-between">
-            <h3>特殊需求</h3>
-            <Chip label="選填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-          </div>
-          <Textarea fluid rows="3" />
-        </div>
-      </div>
+
+      <DineInInput v-show="getPickUpFoodState.dineInSection" />
+      <CustomPickUpDate v-show="getPickUpFoodState.reserveSection" />
+      <RewardsProgram />
+      <CheckoutOrderContent />
+      <SpecialNeeds />
     </template>
+
     <template #footer>
       <div :style="{ paddingTop: `${getFooterButtonDiv.height.value}px` }"></div>
+
       <div
+        v-if="orderNowStatus !== OrderStages.CONFIRMATION"
         class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500"
         ref="footerButtonDiv"
       >
-        <Button class="py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950">繼續點餐</Button>
-        <Button class="py-2 bg-primary-700 rounded-3xl border-transparent flex-grow">前往結帳</Button>
+        <Button class="py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950" @click="handlePreviousStage">
+          {{ orderNowStatus === OrderStages.ORDER_INFO ? ' 繼續點餐' : '上一步' }}
+        </Button>
+
+        <Button class="py-2 bg-primary-700 rounded-3xl border-transparent flex-grow" @click="handleNextStage">
+          {{ orderNowStatus === OrderStages.ORDER_INFO ? '前往結帳' : '送出訂單' }}
+        </Button>
+      </div>
+
+      <div v-else class="flex items-center flex-col-reverse gap-y-3 px-3 py-4 bg-primary-50 z-10 border-t border-neutral-500">
+        <Button class="w-full py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950">再點一次</Button>
+        <Button class="w-full py-2 bg-primary-700 rounded-3xl border-transparent flex-grow">返回首頁</Button>
       </div>
     </template>
   </CustomerContainer>
@@ -196,10 +174,5 @@ const getPickUpFoodState = computed(() => ({
 }
 :deep(.p-togglebutton-label) {
   font-size: 0.75em;
-}
-:deep(.custome-input-radius) {
-  > .p-datepicker-input {
-    border-radius: 1.5rem !important;
-  }
 }
 </style>

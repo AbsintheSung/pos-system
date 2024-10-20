@@ -1,237 +1,148 @@
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { onMounted, ref, watch, computed } from 'vue'
+import { useElementBounding } from '@vueuse/core'
+import { useWindowScroll } from '@vueuse/core'
 import SelectButton from 'primevue/selectbutton'
+import Button from 'primevue/button'
 import Timeline from 'primevue/timeline'
+import Card from 'primevue/card'
 import Chip from 'primevue/chip'
+import Textarea from 'primevue/textarea'
 import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
 import CustomerContainer from '@/layout/CustomerContainer.vue'
-const checkoutTimeList = ref([
-  { title: '訂單資訊', isActive: false, titleNum: 1 },
-  { title: '付款資訊', isActive: false, titleNum: 2 },
-  { title: '確認送出', isActive: false, titleNum: 3 }
+import DineInInput from '@/components/customer/checkout/DineInInput.vue'
+import CustomPickUpDate from '@/components/customer/checkout/CustomPickUpDate.vue'
+import RewardsProgram from '@/components/customer/checkout/RewardsProgram.vue'
+import CheckoutOrderContent from '@/components/customer/checkout/CheckoutOrderContent.vue'
+import SpecialNeeds from '@/components/customer/checkout/SpecialNeeds.vue'
+const windowScroll = useWindowScroll()
+const windowScrollY = ref(windowScroll.y)
+const orderNowStatus = ref(0)
+const OrderStages = {
+  ORDER_INFO: 'order_info', //訂單資訊
+  PAYMENT_INFO: 'payment_info', //付款資訊
+  CONFIRMATION: 'confirmation' //確認送出
+}
+const orderStatus = ref([
+  { title: '訂單資訊', value: OrderStages.ORDER_INFO, isActive: true, titleNum: 1 },
+  { title: '付款資訊', value: OrderStages.PAYMENT_INFO, isActive: false, titleNum: 2 },
+  { title: '確認送出', value: OrderStages.CONFIRMATION, isActive: false, titleNum: 3 }
 ])
+const footerButtonDiv = ref(null)
+const getFooterButtonDiv = useElementBounding(footerButtonDiv)
 const dineInNumber = ref(null) //內用桌號
-const reserveDate = ref('') //遇缺自取-時間(日)
-const reserveTime = ref('') //遇缺自取-時間(時分)
+const reserveDate = ref(new Date()) //遇缺自取-時間(日)
 const rewardPoints = ref(null) //集點
-const pickUpFoodState = ref('現場外帶')
-const pickUpFoodOptions = ref(['現場外帶', '預約自取', '內用'])
-const handlePickUpFood = (val) => {
-  console.log(val)
-}
-// const todayDate = ref('')
-// const twoDayDate = ref('')
+// const pickUpFoodState = ref('takeOut')
 
-// const now = new Date()
-// todayDate.value = now // 設置為今天的日期
-
-// // 計算兩天後的日期
-// const futureDate = new Date(now)
-// futureDate.setDate(futureDate.getDate() + 2) // 將日期加2天
-// twoDayDate.value = futureDate // 設置為2天後的日期
-
-// 獲取當前日期和時間
-const today = new Date()
-const currentYear = today.getFullYear()
-const currentMonth = today.getMonth()
-const currentDay = today.getDate()
-// 創建今天、明天和後天的日期
-const todayDate = new Date(currentYear, currentMonth, currentDay)
-const tomorrowDate = new Date(currentYear, currentMonth, currentDay + 1)
-const dayAfterTomorrowDate = new Date(currentYear, currentMonth, currentDay + 2)
-
-const disabledDates = computed(() => {
-  const disabledDatesArray = []
-  const startDate = new Date(currentYear, 0, 1) // 從今年1月1日開始
-  const endDate = new Date(currentYear + 1, 0, 2) // 到明年1月2日結束（包括跨年的情況）
-
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    const currentDate = new Date(d)
-
-    // 檢查是否是今年或明年的1月1日
-    if (
-      currentDate.getFullYear() !== currentYear &&
-      !(currentDate.getFullYear() === currentYear + 1 && currentDate.getMonth() === 0 && currentDate.getDate() === 1)
-    ) {
-      disabledDatesArray.push(new Date(currentDate))
-      continue
-    }
-
-    // 檢查是否是這個月或下個月（允許跨月）
-    if (currentDate.getMonth() !== currentMonth && currentDate.getMonth() !== (currentMonth + 1) % 12) {
-      disabledDatesArray.push(new Date(currentDate))
-      continue
-    }
-
-    // 只允許今天、明天和後天
-    if (
-      ![todayDate, tomorrowDate, dayAfterTomorrowDate].some(
-        (allowedDate) =>
-          allowedDate.getDate() === currentDate.getDate() &&
-          allowedDate.getMonth() === currentDate.getMonth() &&
-          allowedDate.getFullYear() === currentDate.getFullYear()
-      )
-    ) {
-      disabledDatesArray.push(new Date(currentDate))
-    }
-  }
-  return disabledDatesArray
-})
-console.dir(today)
-
-const roundToNextFiveMinutes = (date) => {
-  const minutes = date.getMinutes()
-  const remainder = minutes % 5
-  if (remainder !== 0) {
-    date.setMinutes(minutes + (5 - remainder)) // 將分數四捨五入至5的倍數
-  }
-}
-const test = (val) => {
-  const selectedDate = new Date(val) // 將選取的日期轉為 Date 對象
-
-  // 如果選擇的是今天
-  if (
-    reserveDate.value.getDate() === todayDate.getDate() &&
-    reserveDate.value.getMonth() === todayDate.getMonth() &&
-    reserveDate.value.getFullYear() === todayDate.getFullYear()
-  ) {
-    // 如果時間還沒到10:00，設置為10:00
-    if (today.getHours() < 10 || (today.getHours() === 10 && today.getMinutes() === 0)) {
-      reserveDate.value.setHours(10)
-      reserveDate.value.setMinutes(0)
-    } else if (today.getHours() >= 22) {
-      // 如果已經超過22:00，設置為22:00
-      reserveDate.value.setHours(22)
-      reserveDate.value.setMinutes(0)
-    } else {
-      // 否則設置為當前時間，並將分鐘數調整為5的倍數
-      reserveDate.value.setHours(today.getHours())
-      roundToNextFiveMinutes(reserveDate.value)
-    }
-  } else if (
-    // 如果選擇的是明天或後天，設置為10:00
-    (reserveDate.value.getDate() === tomorrowDate.getDate() &&
-      reserveDate.value.getMonth() === tomorrowDate.getMonth() &&
-      reserveDate.value.getFullYear() === tomorrowDate.getFullYear()) ||
-    (reserveDate.value.getDate() === dayAfterTomorrowDate.getDate() &&
-      reserveDate.value.getMonth() === dayAfterTomorrowDate.getMonth() &&
-      reserveDate.value.getFullYear() === dayAfterTomorrowDate.getFullYear())
-  ) {
-    reserveDate.value.setHours(10)
-    reserveDate.value.setMinutes(0)
-  }
-
-  // // 更新 reserveDate 的值
-  // reserveDate.value = selectedDate
-  // console.log(reserveDate.value)
+// const pickUpFoodOptions = ref([
+//   { name: '現場外帶', value: 'takeOut' },
+//   { name: '預約自取', value: 'reserve' },
+//   { name: '內用', value: 'dineIn' }
+// ])
+const handlePickUpFood = () => {
+  windowScrollY.value = 0
 }
 
-// 計算最小時間
-const minTime = computed(() => {
-  // 如果選擇的是今天
-  if (reserveDate.value === '') return
-  if (
-    reserveDate.value.getDate() === todayDate.getDate() &&
-    reserveDate.value.getMonth() === todayDate.getMonth() &&
-    reserveDate.value.getFullYear() === todayDate.getFullYear()
-  ) {
-    return new Date(currentYear, currentMonth, currentDay, 10, 0)
-  } else if (
-    reserveDate.value.getDate() === tomorrowDate.getDate() &&
-    reserveDate.value.getMonth() === tomorrowDate.getMonth() &&
-    reserveDate.value.getFullYear() === tomorrowDate.getFullYear()
-  ) {
-    return new Date(currentYear, currentMonth, currentDay + 1, 10, 0)
-  } else if (
-    reserveDate.value.getDate() === dayAfterTomorrowDate.getDate() &&
-    reserveDate.value.getMonth() === dayAfterTomorrowDate.getMonth() &&
-    reserveDate.value.getFullYear() === dayAfterTomorrowDate.getFullYear()
-  ) {
-    return new Date(currentYear, currentMonth, currentDay + 2, 10, 0)
-  }
-  // 如果不符合任何條件，返回 null 或其他預設值
-  return null
-})
+const PickUpFoodState = {
+  TAKE_OUT: 'takeOut',
+  RESERVE: 'reserve',
+  DINE_IN: 'dineIn'
+}
+const pickUpFoodState = ref(PickUpFoodState.TAKE_OUT)
+const pickUpFoodOptions = ref([
+  { name: '現場外帶', value: PickUpFoodState.TAKE_OUT },
+  { name: '預約自取', value: PickUpFoodState.RESERVE },
+  { name: '內用', value: PickUpFoodState.DINE_IN }
+])
+const getPickUpFoodState = computed(() => ({
+  //取得 pickUpFoodState 是否相同 並根據對應屬性 回傳布林值
+  takeOutSection: pickUpFoodState.value === 'takeOut',
+  reserveSection: pickUpFoodState.value === 'reserve',
+  dineInSection: pickUpFoodState.value === 'dineIn'
+}))
 
-// 計算最大時間
-const maxTime = computed(() => {
-  if (reserveDate.value === '') return
-  if (
-    reserveDate.value.getDate() === todayDate.getDate() &&
-    reserveDate.value.getMonth() === todayDate.getMonth() &&
-    reserveDate.value.getFullYear() === todayDate.getFullYear()
-  ) {
-    return new Date(currentYear, currentMonth, currentDay, 22, 0)
-  } else if (
-    reserveDate.value.getDate() === tomorrowDate.getDate() &&
-    reserveDate.value.getMonth() === tomorrowDate.getMonth() &&
-    reserveDate.value.getFullYear() === tomorrowDate.getFullYear()
-  ) {
-    return new Date(currentYear, currentMonth, currentDay + 1, 22, 0)
-  } else if (
-    reserveDate.value.getDate() === dayAfterTomorrowDate.getDate() &&
-    reserveDate.value.getMonth() === dayAfterTomorrowDate.getMonth() &&
-    reserveDate.value.getFullYear() === dayAfterTomorrowDate.getFullYear()
-  ) {
-    return new Date(currentYear, currentMonth, currentDay + 2, 22, 0)
+function nextStage() {
+  console.log(orderNowStatus.value, orderStatus.value.length - 1)
+  if (orderNowStatus.value === orderStatus.value.length - 1) {
+    //做其他路由或api操作
   }
-  // 如果不符合任何條件，返回 null 或其他預設值
-  return null
-})
-// 設置最小和最大日期
-const minDate = ref(todayDate)
-const maxDate = computed(() => {
-  // 如果後天是下一年，則 maxDate 應該是下一年的 1 月 1 日
-  if (dayAfterTomorrowDate.getFullYear() > currentYear) {
-    return new Date(currentYear + 1, 0, 1)
+  if (orderNowStatus.value < orderStatus.value.length - 1) {
+    // // 將當前階段設為非活動狀態
+    // orderStatus.value[orderNowStatus.value].isActive = false
+
+    // 更新 orderNowStatus，進入下一階段
+    orderNowStatus.value++
+
+    // 將舊階段設為活動狀態
+    orderStatus.value[orderNowStatus.value].isActive = true
   }
-  // 否則，maxDate 就是後天
-  return dayAfterTomorrowDate
-})
-watch(
-  () => reserveDate.value,
-  (val) => {
-    console.log(val)
+}
+
+function previousStage() {
+  if (orderNowStatus.value === 0) {
+    //跳轉路由到 點餐畫面 設定
   }
-)
+  if (orderNowStatus.value === 1) {
+    // 將當前階段設為非活動狀態
+    orderStatus.value[orderNowStatus.value].isActive = false
+    // 更新 orderNowStatus，返回上一階段
+    orderNowStatus.value--
+  }
+  if (orderNowStatus.value === 2) {
+    //結束點餐，跳轉回首頁面設定
+  }
+}
 </script>
 <template>
   <CustomerContainer>
-    <template #default>
+    <template #header>
+      <h2 class="font-semibold text-center py-3 bg-neutral-50">BUY咖啡</h2>
       <div class="px-3 bg-primary-100">
         <Timeline
-          :value="checkoutTimeList"
+          :value="orderStatus"
           layout="horizontal"
           pt:event:class="flex-1 justify-center"
           pt:eventContent:class="text-center text-[12px]"
           pt:eventSeparator:class="relative "
           pt:eventMarker:class="-right-1/2 "
-          pt:eventConnector:class="absolute -right-1/2"
+          pt:eventConnector:class="absolute -right-1/2 test bg-primary-700"
         >
           <template #marker="slotProps">
-            <div class="rounded-full w-4 h-4 bg-primary-600 flex justify-center items-center text-[12px] mx-auto z-10">
+            <div
+              :class="[
+                'rounded-full w-4 h-4 flex justify-center items-center text-[12px] mx-auto z-10',
+                slotProps.item.isActive ? 'bg-primary-700 text-white' : 'bg-neutral-50 text-black'
+              ]"
+            >
               {{ slotProps.item.titleNum }}
             </div>
           </template>
           <template #content="slotProps">
-            {{ slotProps.item.title }}
+            <p :class="['text-[12px]', slotProps.item.isActive ? 'text-primary-700 font-bold' : 'text-black']">
+              {{ slotProps.item.title }}
+            </p>
           </template>
         </Timeline>
       </div>
+    </template>
+    <template #default>
       <div class="p-3 flex flex-col gap-y-2">
         <h2 class="font-bold text-xl">取餐資訊</h2>
         <div class="card flex justify-start">
           <SelectButton
             v-model="pickUpFoodState"
             :options="pickUpFoodOptions"
+            optionLabel="name"
+            optionValue="value"
             :allowEmpty="false"
             aria-labelledby="basic"
             pt:root:class="bg-primary-50 border-transparent flex gap-x-3"
             @update:modelValue="handlePickUpFood"
           />
         </div>
-        <div class="flex flex-col gap-y-2">
+        <div class="flex flex-col gap-y-2" v-show="getPickUpFoodState.reserveSection">
           <h3>門市資訊</h3>
           <div class="bg-primary-100 font-normal p-3 rounded-xl">
             <p class="text-neutral-950">BUY咖</p>
@@ -239,55 +150,26 @@ watch(
           </div>
         </div>
       </div>
-      <div class="p-3 flex flex-col gap-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="font-bold text-xl">
-            <label for="dineInNumber">內用桌號</label>
-          </h2>
-          <Chip label="必填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-        </div>
-        <InputText type="text" id="dineInNumber" v-model="dineInNumber" placeholder="請填寫桌號" fluid class="rounded-3xl" />
+      <DineInInput v-show="getPickUpFoodState.dineInSection" />
+      <CustomPickUpDate v-show="getPickUpFoodState.reserveSection" />
+      <RewardsProgram />
+      <CheckoutOrderContent />
+      <SpecialNeeds />
+    </template>
+    <template #footer>
+      <div :style="{ paddingTop: `${getFooterButtonDiv.height.value}px` }"></div>
+
+      <div
+        v-if="orderNowStatus < 2"
+        class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500"
+        ref="footerButtonDiv"
+      >
+        <Button class="py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950" @click="previousStage">繼續點餐</Button>
+        <Button class="py-2 bg-primary-700 rounded-3xl border-transparent flex-grow" @click="nextStage">前往結帳</Button>
       </div>
-      <div class="p-3 flex flex-col gap-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="font-bold text-xl">自取時間</h2>
-          <Chip label="必填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-        </div>
-        <DatePicker
-          v-model="reserveDate"
-          showButtonBar
-          fluid
-          pt:root:class="custome-input-radius"
-          pt:panel:class="mt-2"
-          :showOtherMonths="false"
-          :minDate="minDate"
-          :maxDate="maxDate"
-          :disabledDates="disabledDates"
-          @update:modelValue="test"
-        />
-        <DatePicker
-          id="datepicker-timeonly"
-          v-model="reserveDate"
-          timeOnly
-          :minDate="minTime"
-          :maxDate="maxTime"
-          fluid
-          :stepMinute="5"
-          pt:root:class="custome-input-radius"
-          pt:panel:class="mt-2"
-        />
-      </div>
-      <div class="p-3 flex flex-col gap-y-3">
-        <div class="flex items-center justify-between">
-          <h2 class="font-bold text-xl">
-            <label for="rewardPoints">會員集點</label>
-          </h2>
-          <Chip label="選填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
-        </div>
-        <InputText type="text" id="rewardPoints" v-model="rewardPoints" placeholder="請輸入手機號碼" fluid class="rounded-3xl" />
-      </div>
-      <div class="p-3">
-        <h2 class="font-bold text-xl">訂單內容</h2>
+      <div v-else class="flex items-center flex-col-reverse gap-y-3 px-3 py-4 bg-primary-50 z-10 border-t border-neutral-500">
+        <Button class="w-full py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950">再點一次</Button>
+        <Button class="w-full py-2 bg-primary-700 rounded-3xl border-transparent flex-grow">返回首頁</Button>
       </div>
     </template>
   </CustomerContainer>
@@ -310,9 +192,10 @@ watch(
 :deep(.p-togglebutton-label) {
   font-size: 0.75em;
 }
-:deep(.custome-input-radius) {
-  > .p-datepicker-input {
-    border-radius: 1.5rem !important;
-  }
-}
+
+// :deep(.custome-input-radius) {
+//   > .p-datepicker-input {
+//     border-radius: 1.5rem !important;
+//   }
+// }
 </style>
