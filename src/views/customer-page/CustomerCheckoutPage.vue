@@ -21,8 +21,7 @@ const checkoutTimeList = ref([
 const footerButtonDiv = ref(null)
 const getFooterButtonDiv = useElementBounding(footerButtonDiv)
 const dineInNumber = ref(null) //內用桌號
-const reserveDate = ref('') //遇缺自取-時間(日)
-const reserveTime = ref('') //遇缺自取-時間(時分)
+const reserveDate = ref(null) //遇缺自取-時間(日)
 const rewardPoints = ref(null) //集點
 const pickUpFoodState = ref('takeOut')
 
@@ -42,21 +41,129 @@ const getPickUpFoodState = computed(() => ({
   dineInSection: pickUpFoodState.value === 'dineIn'
 }))
 
-const todayDate = ref('')
-const twoDayDate = ref('')
+// const todayDate = ref(null)
+// const tomorrow = ref(null)
+// const twoDayDate = ref(null)
+// const now = new Date()
+// const futureDate = new Date(now) // 計算兩天後的日期
+// const tomorrowDate = new Date(now)
+// todayDate.value = now // 設置為今天的日期
+// futureDate.setDate(futureDate.getDate() + 2) // 將日期加2天
+// twoDayDate.value = futureDate // 設置為2天後的日期
 
-const now = new Date()
-todayDate.value = now // 設置為今天的日期
+const handleDate = () => {
+  //若是今日
+  const now = new Date()
+  const nowHours = now.getHours()
+  const nowMinutes = now.getMinutes()
+  if (isToday.value) {
+    if (reserveDate.value.getHours() >= 10 || reserveDate.value.getHours() < 22) {
+      reserveDate.value.setHours(nowHours)
+      reserveDate.value.setMinutes(roundToNearestFive(nowMinutes))
+    } else if (reserveDate.value.getHours() < 10) {
+      reserveDate.value.setHours(10)
+      reserveDate.value.setMinutes(roundToNearestFive(0))
+    } else if (reserveDate.value.getHours() > 22) {
+      reserveDate.value.setHours(22)
+      reserveDate.value.setMinutes(roundToNearestFive(0))
+    }
+  } else {
+    reserveDate.value.setHours(10)
+    reserveDate.value.setMinutes(0)
+  }
+}
 
-// 計算兩天後的日期
-const futureDate = new Date(now)
-futureDate.setDate(futureDate.getDate() + 2) // 將日期加2天
-twoDayDate.value = futureDate // 設置為2天後的日期
+const isToday = computed(() => {
+  const selectedDate = new Date(reserveDate.value) // 選中日期
+  const currentDate = new Date() // 今天日期
+
+  // 比較是否為今日
+  return selectedDate.toDateString() === currentDate.toDateString()
+})
+const isTomorrow = computed(() => {
+  const selectedDate = new Date(reserveDate.value)
+  const currentDate = new Date()
+  // 获取明天的日期
+  const tomorrow = new Date(currentDate)
+  tomorrow.setDate(currentDate.getDate() + 1)
+  // 判断是否是明天
+  return selectedDate.toDateString() === tomorrow.toDateString()
+})
+
+const isDayAfterTomorrow = computed(() => {
+  const selectedDate = new Date(reserveDate.value)
+  const currentDate = new Date()
+  // 获取后天的日期
+  const dayAfterTomorrow = new Date(currentDate)
+  dayAfterTomorrow.setDate(currentDate.getDate() + 2)
+  // 判断是否是后天
+  return selectedDate.toDateString() === dayAfterTomorrow.toDateString()
+})
+
+const minTime = computed(() => {
+  if (isToday.value) {
+    return reserveDate.value
+  } else if (isTomorrow.value) {
+    // const selectedDate = new Date(reserveDate.value)
+    const currentDate = new Date()
+    // 获取明天的日期
+    const tomorrow = new Date(currentDate)
+    tomorrow.setDate(currentDate.getDate() + 1)
+    tomorrow.setHours(10)
+    tomorrow.setMinutes(0)
+    return tomorrow
+  } else {
+    // const selectedDate = new Date(reserveDate.value)
+    const currentDate = new Date()
+    // 获取后天的日期
+    const dayAfterTomorrow = new Date(currentDate)
+    dayAfterTomorrow.setDate(currentDate.getDate() + 2)
+    dayAfterTomorrow.setHours(10)
+    dayAfterTomorrow.setMinutes(0)
+    return dayAfterTomorrow
+  }
+})
+const maxTime = computed(() => {
+  if (isToday.value) {
+    // const selectedDate = new Date(reserveDate.value) // 選中日期
+    const currentDate = new Date()
+    currentDate.setHours(22)
+    currentDate.setMinutes(0)
+    return currentDate
+  } else if (isTomorrow.value) {
+    // const selectedDate = new Date(reserveDate.value)
+    const currentDate = new Date()
+    // 获取明天的日期
+    const tomorrow = new Date(currentDate)
+    tomorrow.setDate(currentDate.getDate() + 1)
+    tomorrow.setHours(22)
+    tomorrow.setMinutes(0)
+    return tomorrow
+  } else {
+    // const selectedDate = new Date(reserveDate.value)
+    const currentDate = new Date()
+    // 获取后天的日期
+    const dayAfterTomorrow = new Date(currentDate)
+    dayAfterTomorrow.setDate(currentDate.getDate() + 2)
+    dayAfterTomorrow.setHours(22)
+    dayAfterTomorrow.setMinutes(0)
+    return dayAfterTomorrow
+  }
+})
+
+//將分鐘轉成 5的倍數
+const roundToNearestFive = (minutesNum) => {
+  console.log(minutesNum)
+  const minutes = minutesNum
+  const roundedMinutes = Math.ceil(minutes / 5) * 5
+  console.log(roundedMinutes)
+  return roundedMinutes
+}
 
 watch(
-  () => windowScrollY.value,
+  () => reserveDate.value,
   (val) => {
-    // console.log(val)
+    console.log(val)
   }
 )
 </script>
@@ -129,17 +236,18 @@ watch(
           pt:root:class="custome-input-radius"
           pt:panel:class="mt-2"
           :showOtherMonths="false"
-          :minDate="todayDate"
-          :maxDate="twoDayDate"
+          @update:modelValue="handleDate"
         />
         <DatePicker
           id="datepicker-timeonly"
-          v-model="reserveTime"
+          v-model="reserveDate"
           timeOnly
           fluid
           :stepMinute="5"
           pt:root:class="custome-input-radius"
           pt:panel:class="mt-2"
+          :minDate="minTime"
+          :maxDate="maxTime"
         />
       </div>
       <div class="p-3 flex flex-col gap-y-3">
