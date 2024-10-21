@@ -19,7 +19,7 @@ const getHeaderNav = useElementBounding(headerNav)
 const getHeaderInput = useElementBounding(headerInput)
 const getHeaderInfo = useElementBounding(headerInfo)
 const getHeaderContainer = useElementBounding(customerContainer)
-const isHeaderNavFixed = computed(() => (y.value > 0 ? 'fixed w-full z-10 max-w-screen-sm' : ''))
+const isHeaderNavFixed = computed(() => (y.value > 0 ? 'fixed w-full z-20 max-w-screen-sm' : ''))
 
 const computedHeight = computed(() => getHeaderInput.height.value + getHeaderInfo.height.value - getHeaderNav.height.value)
 
