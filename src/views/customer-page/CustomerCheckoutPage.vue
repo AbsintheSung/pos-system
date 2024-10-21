@@ -15,8 +15,8 @@ import OrderTimeLine from '@/components/customer/checkout/OrderTimeLine.vue'
 const windowScroll = useWindowScroll()
 const router = useRouter()
 const OrderStages = {
-  ORDER_INFO: 'order_info', // 訂單資訊
-  PAYMENT_INFO: 'payment_info', // 付款資訊
+  ORDER_INFO: 'orderInfo', // 訂單資訊
+  PAYMENT_INFO: 'paymentInfo', // 付款資訊
   CONFIRMATION: 'confirmation' // 確認送出
 }
 const PickUpFoodState = {
@@ -24,11 +24,16 @@ const PickUpFoodState = {
   RESERVE: 'reserve',
   DINE_IN: 'dineIn'
 }
+const PayStates = {
+  CASH_PAYMENT: 'cashPayment',
+  LINE_PAYMENY: 'linePayment'
+}
 const footerButtonDiv = ref(null)
 const getFooterButtonDiv = useElementBounding(footerButtonDiv)
 const windowScrollY = ref(windowScroll.y)
 const orderNowStatus = ref(OrderStages.ORDER_INFO) // 初始為訂單資訊階段
 const pickUpFoodState = ref(PickUpFoodState.TAKE_OUT) //選擇按鈕狀態( 預約、自取... )
+const payState = ref(PayStates.CASH_PAYMENT)
 const orderStatus = ref([
   { title: '訂單資訊', value: OrderStages.ORDER_INFO, isActive: true, titleNum: 1 },
   { title: '付款資訊', value: OrderStages.PAYMENT_INFO, isActive: false, titleNum: 2 },
@@ -39,7 +44,10 @@ const pickUpFoodOptions = ref([
   { name: '預約自取', value: PickUpFoodState.RESERVE },
   { name: '內用', value: PickUpFoodState.DINE_IN }
 ])
-
+const payOptions = ref([
+  { name: '現金付款', value: PayStates.CASH_PAYMENT },
+  { name: 'Line Pay', value: PayStates.LINE_PAYMENY }
+])
 // 根據 pickUpFoodState 值 來判斷是否是跟 PickUpFoodState 相同，來做各組建的顯示隱藏
 const getPickUpFoodState = computed(() => ({
   takeOutSection: pickUpFoodState.value === PickUpFoodState.TAKE_OUT,
@@ -49,6 +57,10 @@ const getPickUpFoodState = computed(() => ({
 
 const handlePickUpFood = () => {
   windowScrollY.value = 0
+}
+const handlePay = (val) => {
+  windowScrollY.value = 0
+  console.log(val)
 }
 
 // 進入下一階段
@@ -91,6 +103,24 @@ const deactivatePreviousStage = (stage) => {
   const currentIndex = orderStatus.value.findIndex((status) => status.value === stage)
   orderStatus.value[currentIndex + 1].isActive = false
 }
+
+import Card from 'primevue/card'
+import InputText from 'primevue/inputtext'
+import RadioButton from 'primevue/radiobutton'
+const selectedReceipt = ref('paperInvoice')
+const receiptOptions = ref([
+  { name: '手機載具', value: 'phoneCarrier', isInput: false, placeholder: '請輸入載具號碼(/-ABCD12)' },
+  { name: '公司統一編號', value: 'unifiedNumber', isInput: false, placeholder: '請輸入統一編號' },
+  { name: '捐贈發票', value: 'donationReceipt', isInput: false, placeholder: '' },
+  { name: '發票紙本證明聯', value: 'paperReceipt', isInput: false, placeholder: '' }
+])
+const handleReceipt = (val) => {
+  const index = receiptOptions.value.findIndex((item) => item.value === val)
+  receiptOptions.value.forEach((item) => (item.isInput = false))
+  if (val === 'phoneCarrier' || val === 'unifiedNumber') {
+    receiptOptions.value[index].isInput = true
+  }
+}
 </script>
 <template>
   <CustomerContainer>
@@ -101,10 +131,10 @@ const deactivatePreviousStage = (stage) => {
       </div>
     </template>
 
-    <template #default>
+    <!-- <template #default>
       <div class="p-3 flex flex-col gap-y-2">
         <h2 class="font-bold text-xl">取餐資訊</h2>
-        <div class="card flex justify-start">
+        <div class="flex justify-start">
           <SelectButton
             v-model="pickUpFoodState"
             :options="pickUpFoodOptions"
@@ -131,6 +161,54 @@ const deactivatePreviousStage = (stage) => {
       <RewardsProgram />
       <CheckoutOrderContent />
       <SpecialNeeds />
+    </template> -->
+    <template #default>
+      <div class="p-3 flex flex-col gap-y-2">
+        <h2 class="font-bold text-xl">付款資訊</h2>
+        <SelectButton
+          v-model="payState"
+          :options="payOptions"
+          optionLabel="name"
+          optionValue="value"
+          :allowEmpty="false"
+          aria-labelledby="basic"
+          pt:root:class="bg-primary-50 border-transparent flex gap-x-3 pay-button"
+          @update:modelValue="handlePay"
+        />
+      </div>
+      <div class="p-3 flex flex-col gap-y-2">
+        <h2>發票資訊</h2>
+        <div class="flex flex-col gap-4">
+          <div v-for="receiptItem in receiptOptions" :key="receiptItem.value" class="flex items-center flex-wrap gap-y-2">
+            <RadioButton
+              v-model="selectedReceipt"
+              :inputId="receiptItem.value"
+              name="dynamic"
+              :value="receiptItem.value"
+              @update:modelValue="handleReceipt"
+            />
+            <label :for="receiptItem.value" class="ml-2">{{ receiptItem.name }}</label>
+            <InputText v-if="receiptItem.isInput" type="text" :placeholder="receiptItem.placeholder" class="rounded-3xl" fluid />
+          </div>
+        </div>
+      </div>
+      <div class="p-3 flex flex-col gap-y-2">
+        <h2 class="font-bold text-xl">訂單內容</h2>
+        <Card class="border-neutral-950 border shadow-none" pt:body:class="p-3">
+          <template #content>
+            <div class="flex items-center gap-x-3">
+              <div class="bg-primary-100 p-1 flex justify-center items-center w-9 h-9 rounded-md">
+                <p class="font-bold">1</p>
+              </div>
+              <h3 class="font-bold">經典美式咖啡</h3>
+              <span class="text-neutral-400 font-normal text-[14px]">少冰</span>
+              <div class="flex-grow">
+                <p class="font-medium text-end">$120</p>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </div>
     </template>
 
     <template #footer>
@@ -174,5 +252,10 @@ const deactivatePreviousStage = (stage) => {
 }
 :deep(.p-togglebutton-label) {
   font-size: 0.75em;
+}
+:deep(.pay-button) {
+  > .p-togglebutton {
+    width: 50%;
+  }
 }
 </style>
