@@ -1,9 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CarouselPage from '@/views/CarouselPage.vue'
-import CustomerMenuPage from '@/views/customer-page/CustomerMenuPage.vue'
-import CustomerIndex from '@/views/customer-page/CustomerIndex.vue'
-import CustomerProductPage from '@/views/customer-page/CustomerProductPage.vue'
-import CustomerCheckoutPage from '@/views/customer-page/CustomerCheckoutPage.vue'
+// import CustomerMenuPage from '@/views/customer/CustomerMenuPage.vue'
+// import CustomerIndex from '@/views/customer/CustomerIndex.vue'
+// import CustomerProductPage from '@/views/customer/CustomerProductPage.vue'
+// import CustomerCheckoutPage from '@/views/customer/CustomerCheckoutPage.vue'
+
+import CustomerIndex from "@customer/CustomerIndex.vue"
+import CustomerMenu from '@customer/menu/CustomerMenu.vue'
+import CustomerProduct from '@customer/product/CustomerProduct.vue'
+import CustomerCheckout from '@customer/checkout/CustomerCheckout.vue'
+import CheckoutOrder from '@customer/checkout/views/CheckoutOrder.vue'
+import CheckoutPayment from '@customer/checkout/views/CheckoutPayment.vue'
+import CheckoutCompleted from '@customer/checkout/views/CheckoutCompleted.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior() {
@@ -23,51 +31,40 @@ const router = createRouter({
         {
           path: 'menu',
           name: 'CustomerMenu',
-          component: CustomerMenuPage
+          component: CustomerMenu
         },
         {
           path: 'product/:id',
           name: 'CustomerProduct',
-          component: CustomerProductPage
+          component: CustomerProduct
         },
         {
           path: 'checkout',
           name: 'CustomerCheckout',
-          component: CustomerCheckoutPage,
+          component: CustomerCheckout,
+          redirect: { name: 'CustomerOrderInfo' },
+          children: [
+            {
+              path: 'orderinfo',
+              name: 'CustomerOrderInfo',
+              component: CheckoutOrder
+            },
+            {
+              path: 'payment',
+              name: 'CheckoutPayment',
+              component: CheckoutPayment
+            },
+            {
+              path: 'completed',
+              name: 'CheckoutCompleted',
+              component: CheckoutCompleted
+            },
+          ]
         }
       ],
       redirect: { name: 'CustomerMenu' }
     },
-    // {
-    //   path: '/customer',
-    //   name: 'Customer',
-    //   component: CustomerPage
-    // },
-    // {
-    //   path: '/customer/menu',
-    //   name: 'CustomerMenu',
-    //   component: CustomerMenuPage,
-    // },
-    // {
-    //   path: '/customer/product/:id',
-    //   name: 'CustomerProduct',
-    //   component: CustomerProductPage,
-    // },
-    // {
-    //   path: '/customer/checkout',
-    //   name: 'CustomerCheckout',
-    //   component: CustomerCheckoutPage,
-    // },
-    // {
-    //   path: '/employee',
-    //   name: 'Employee',
-    //   component: () => import('@/views/EmployeePage.vue')
-    // }
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   component: () => import('../views/AboutView.vue')
-    // }
+
   ]
 })
 
