@@ -14,7 +14,6 @@ export const useOrderStore = defineStore('order', () => {
   const fetchOrderId = async () => {
     const isCookieExist = checkGuidAndOrderIdExist()
     if (isCookieExist) {
-      console.log('無須請求')
       setOrderCookie()
     } else {
       console.log('請求')
@@ -29,6 +28,16 @@ export const useOrderStore = defineStore('order', () => {
     }
   }
 
+  //添加進購物車
+  const fetchProductInOrder = async (data) => {
+    try {
+      const response = await fetchApi.posteProduct(data)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
 
   const setOrderCookie = () => {
@@ -38,6 +47,7 @@ export const useOrderStore = defineStore('order', () => {
   return {
     getOrderId,
     getGuidId,
+    fetchProductInOrder,
     fetchOrderId,
     setOrderCookie,
   }
