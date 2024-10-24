@@ -1,11 +1,20 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useWindowScroll } from '@vueuse/core'
+import { useElementBounding } from '@vueuse/core'
+import { useOrderStore } from '@/stores/order.js'
+import { useCheckoutStore } from '@/stores/checkout'
 import SelectButton from 'primevue/selectbutton'
 import Card from 'primevue/card'
+import Button from 'primevue/button'
 import InputText from 'primevue/inputtext'
 import RadioButton from 'primevue/radiobutton'
-
+const router = useRouter()
+const orderStore = useOrderStore()
+const checkoutStore = useCheckoutStore()
+const footerButtonDiv = ref(null)
+const getFooterButtonDiv = useElementBounding(footerButtonDiv)
 // PayStates 枚舉
 const PayStates = {
   CASH_PAYMENT: 'cashPayment', //現金付款
@@ -14,10 +23,10 @@ const PayStates = {
 
 // ReceiptStates 枚舉
 const ReceiptStates = {
-  PHONE_CARRIER: 'phoneCarrier', //手機載具
-  UNIFIED_NUMBER: 'unifiedNumber', //公司統一編號
-  DONATION_RECEIPT: 'donationReceipt', //捐贈發票
-  PAPER_RECEIPT: 'paperReceipt' //紙本
+  PHONE_CARRIER: '載具', //手機載具
+  UNIFIED_NUMBER: '統編', //公司統一編號
+  DONATION_RECEIPT: '捐贈發票', //捐贈發票
+  PAPER_RECEIPT: '紙本' //紙本
 }
 
 const windowScroll = useWindowScroll()
@@ -43,12 +52,37 @@ const handleReceipt = (val) => {
   if (val === ReceiptStates.PHONE_CARRIER || val === ReceiptStates.UNIFIED_NUMBER) {
     receiptOptions.value[index].hasInput = true
   }
+  checkoutStore.checkoutCash.invoice = val
+  checkoutStore.checkoutCash.invoiceCarrier = ''
 }
 
 const handlePay = (val) => {
   windowScrollY.value = 0
   console.log(val)
 }
+
+const handleNextStage = async () => {
+  // windowScrollY.value = 0
+  // router.push('/customer/checkout/payment')
+  const response = await checkoutStore.fetchUpdateCheckoutCash()
+  if (response.statusCode === 200) {
+    router.push('/customer/checkout/completed')
+  }
+}
+const handlePreviousStage = () => {
+  // windowScrollY.value = 0
+  router.push('/customer/checkout/orderinfo')
+}
+
+onMounted(() => {
+  checkoutStore.checkoutCash.invoice = selectedReceipt.value
+})
+// watch(
+//   () => selectedReceipt.value,
+//   () => {
+//     checkoutStore.checkoutCash.invoiceCarrier = ''
+//   }
+// )
 </script>
 <template>
   <div class="p-3 flex flex-col gap-y-2">
@@ -76,26 +110,65 @@ const handlePay = (val) => {
           @update:modelValue="handleReceipt"
         />
         <label :for="receiptItem.value" class="ml-2">{{ receiptItem.name }}</label>
-        <InputText v-if="receiptItem.hasInput" type="text" :placeholder="receiptItem.placeholder" class="rounded-3xl" fluid />
+        <InputText
+          v-model="checkoutStore.checkoutCash.invoiceCarrier"
+          v-if="receiptItem.hasInput"
+          type="text"
+          :placeholder="receiptItem.placeholder"
+          class="rounded-3xl"
+          fluid
+        />
       </div>
     </div>
   </div>
   <div class="p-3 flex flex-col gap-y-2">
     <h2 class="font-bold text-xl">訂單內容</h2>
-    <Card class="border-neutral-950 border shadow-none" pt:body:class="p-3">
-      <template #content>
-        <div class="flex items-center gap-x-3">
-          <div class="bg-primary-100 p-1 flex justify-center items-center w-9 h-9 rounded-md">
-            <p class="font-bold">1</p>
-          </div>
-          <h3 class="font-bold">經典美式咖啡</h3>
-          <span class="text-neutral-400 font-normal text-[14px]">少冰</span>
-          <div class="flex-grow">
-            <p class="font-medium text-end">$120</p>
-          </div>
-        </div>
-      </template>
-    </Card>
+    <ul class="flex flex-col gap-y-3">
+      <li v-for="orderItem in orderStore.getCartList" :key="orderItem.orderItemId">
+        <Card class="border-neutral-950 border shadow-none" pt:body:class="p-3">
+          <template #content>
+            <div class="flex items-center gap-x-3">
+              <div class="bg-primary-100 p-1 flex justify-center items-center w-9 h-9 rounded-md">
+                <p class="font-bold">{{ orderItem.serving }}</p>
+              </div>
+              <h3 class="font-bold">{{ orderItem.name }}</h3>
+              <p class="text-neutral-400 font-normal text-[14px]">
+                <span v-for="(customItem, index) in orderItem.customization" :key="customItem">
+                  {{ customItem }}<span v-if="index < orderItem.customization.length - 1"> | </span>
+                </span>
+              </p>
+              <div class="flex-grow">
+                <p class="font-medium text-end whitespace-nowrap">$ {{ orderItem.price }}</p>
+              </div>
+            </div>
+          </template>
+        </Card>
+      </li>
+    </ul>
+  </div>
+
+  <div class="flex items-center justify-between p-3">
+    <p class="font-bold">應付金額</p>
+    <p class="font-bold">$ {{ orderStore.getCartTotalPrice }}</p>
+  </div>
+
+  <div>
+    <div :style="{ paddingTop: `${getFooterButtonDiv.height.value}px` }"></div>
+    <div
+      class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500"
+      ref="footerButtonDiv"
+    >
+      <Button class="py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950" @click="handlePreviousStage"><p>上一步</p></Button>
+      <Button
+        class="py-2 bg-primary-700 rounded-3xl border-transparent flex-grow flex items-center justify-between"
+        @click="handleNextStage"
+        :disabled="orderStore.getCartListLength === 0"
+      >
+        <p class="border border-neutral-50 px-2 rounded-md">1</p>
+        <p>送出訂單</p>
+        <p>$ {{ orderStore.getCartTotalPrice }}</p>
+      </Button>
+    </div>
   </div>
 </template>
 <style lang="scss" scoped>

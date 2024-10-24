@@ -55,7 +55,6 @@ export const useProductStore = defineStore('product', () => {
 			const response = await fetchApi.getProduct(id)
 			productData.value = response.data
 			customization.value = response.data.customization
-
 			console.log(checkBoxOptions.value)
 		} catch (error) {
 			console.log(error)

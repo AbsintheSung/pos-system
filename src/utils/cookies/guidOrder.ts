@@ -1,5 +1,5 @@
-const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
-const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
+const guidIdCode = import.meta.env.VITE_APP_GUID_NAME; //取得 環境變數 guid碼的cookie名稱
+const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME; //取得 環境變數 productId碼的cookie名稱
 export function setGuidAndOrderId(guidNum: string, orderNum: string) {
   // 設置 guid 和 orderId 的 cookie
   document.cookie = `${guidIdCode}=${guidNum}; path=/`;
@@ -22,7 +22,7 @@ export function getCookie(name: string) {
 
 // 判斷字符串是否非空
 function isNotEmpty(str: string) {
-  return str === '' ? false : true
+  return str === '' || undefined ? false : true
 }
 
 // 判斷 guid 和 orderId 是否存在cookie中

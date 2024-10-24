@@ -11,6 +11,7 @@ import CustomerContainer from '@/layout/CustomerContainer.vue'
 import CustomerProductRaddio from '@/components/customer/product/CustomerProductRaddio.vue'
 import CustomerProductCheckBox from '@/components/customer/product/CustomerProductCheckBox.vue'
 import CustomerFooter from '@/components/customer/footer/CustomerFooter.vue'
+import router from '@/router'
 const productStore = useProductStore()
 const orderStore = useOrderStore()
 const route = useRoute()
@@ -64,7 +65,7 @@ const customization = computed(() => {
         const foundItem = productStore.getDessertOptions.find((testItem) => testItem.name === item)
         if (foundItem) {
           result.push({
-            option: foundItem.name,
+            options: foundItem.name,
             extraPrice: foundItem.price
           })
         }
@@ -72,7 +73,7 @@ const customization = computed(() => {
     } else {
       // 處理其他普通選項
       const optionValue = userInputData.value[id].option
-      result.push({ option: optionValue })
+      result.push({ options: optionValue })
     }
   })
 
@@ -95,13 +96,14 @@ const handlePlus = () => {
 async function handleViewMeals() {
   await orderStore.fetchOrderId()
   const finalData = {
-    guid: orderStore.getGuidId, // 識別碼
-    orderId: Number(orderStore.getOrderId), // 訂單編號
-    productId: Number(productId), // 商品編號
+    // guid: orderStore.getGuidId, // 識別碼
+    // orderId: Number(orderStore.getOrderId), // 訂單編號
+    productId: Number(productId), // 商品編號 ( 此productId router獲取 )
     customization: customization.value, // 客製化選項
     serving: userInputData.value.serving // 份數
   }
   await orderStore.fetchProductInOrder(finalData)
+  router.push('/customer/menu')
 }
 onMounted(async () => {
   await productStore.fetchProductData(productId)

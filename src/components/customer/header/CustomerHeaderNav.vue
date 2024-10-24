@@ -35,7 +35,7 @@ const navigationButtons = ref([
     icon: 'pi pi-cart-minus',
     label: '購物車',
     onClick: () => {
-      /* 購物車按鈕點擊邏輯 */
+      router.push('/customer/checkout')
     },
     liClass: ''
   }
@@ -61,7 +61,7 @@ const navigationProductButtons = ref([
     icon: 'pi pi-cart-minus',
     label: '購物車',
     onClick: () => {
-      /* 購物車按鈕點擊邏輯 */
+      router.push('/customer/checkout')
     },
     liClass: ''
   }

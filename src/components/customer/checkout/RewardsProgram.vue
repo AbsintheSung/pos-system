@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
+import { useCheckoutStore } from '@/stores/checkout'
+const checkoutStore = useCheckoutStore()
 const rewardPoints = ref(null) //集點
 </script>
 <template>
@@ -12,7 +14,7 @@ const rewardPoints = ref(null) //集點
       </h2>
       <Chip label="選填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
     </div>
-    <InputText type="text" id="rewardPoints" v-model="rewardPoints" placeholder="請輸入手機號碼" fluid class="rounded-3xl" />
+    <InputText type="text" id="rewardPoints" v-model="checkoutStore.checkoutFormData.phone" placeholder="請輸入手機號碼" fluid class="rounded-3xl" />
   </div>
 </template>
 <style scoped></style>

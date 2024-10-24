@@ -25,6 +25,7 @@ export const useMenuStore = defineStore('menu', () => {
 		try {
 			const response = await fetchApi.getMenuList()
 			menuList.value = response.data
+			// console.log(menuList.value)
 			productStore.addDessertOptions(response.data, '其他點心')
 		} catch (error) {
 			console.log(error)
