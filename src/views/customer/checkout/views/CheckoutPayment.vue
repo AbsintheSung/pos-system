@@ -5,6 +5,7 @@ import { useWindowScroll } from '@vueuse/core'
 import { useElementBounding } from '@vueuse/core'
 import { useOrderStore } from '@/stores/order.js'
 import { useCheckoutStore } from '@/stores/checkout'
+import { useCookie } from '@/composables/useCookie'
 import SelectButton from 'primevue/selectbutton'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
@@ -13,6 +14,7 @@ import RadioButton from 'primevue/radiobutton'
 const router = useRouter()
 const orderStore = useOrderStore()
 const checkoutStore = useCheckoutStore()
+const useCookies = useCookie()
 const footerButtonDiv = ref(null)
 const getFooterButtonDiv = useElementBounding(footerButtonDiv)
 // PayStates 枚舉
@@ -75,6 +77,9 @@ const handlePreviousStage = () => {
 }
 
 onMounted(() => {
+  if (!useCookies.checkOrderInfoExist()) {
+    router.push('/customer/checkout/orderinfo')
+  }
   checkoutStore.checkoutCash.invoice = selectedReceipt.value
 })
 // watch(
@@ -128,16 +133,16 @@ onMounted(() => {
         <Card class="border-neutral-950 border shadow-none" pt:body:class="p-3">
           <template #content>
             <div class="flex items-center gap-x-3">
-              <div class="bg-primary-100 p-1 flex justify-center items-center w-9 h-9 rounded-md">
+              <div class="bg-primary-100 p-1 flex-shrink-0 flex justify-center items-center w-9 h-9 rounded-md">
                 <p class="font-bold">{{ orderItem.serving }}</p>
               </div>
-              <h3 class="font-bold">{{ orderItem.name }}</h3>
-              <p class="text-neutral-400 font-normal text-[14px]">
+              <h3 class="font-bold whitespace-nowrap">{{ orderItem.name }}</h3>
+              <p class="text-neutral-400 font-normal text-[14px] flex-grow">
                 <span v-for="(customItem, index) in orderItem.customization" :key="customItem">
                   {{ customItem }}<span v-if="index < orderItem.customization.length - 1"> | </span>
                 </span>
               </p>
-              <div class="flex-grow">
+              <div class="ms-auto">
                 <p class="font-medium text-end whitespace-nowrap">$ {{ orderItem.price }}</p>
               </div>
             </div>

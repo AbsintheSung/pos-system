@@ -1,11 +1,15 @@
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { getCookie } from '@/utils/cookies/guidOrder';
 import { fetchApi } from '@/utils/apis/apiUrl';
+import { useOrderStore } from '@/stores/order.js'
 const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
 const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
+import { useCookie } from '@/composables/useCookie'
+const useCookies = useCookie()
 export const useCheckoutStore = defineStore('checkout', () => {
-  const isFormComplete = ref(false)
+  const orderStore = useOrderStore()
+  // const isFormComplete = ref(false)
   const initialFormState = {
     orderId: 0,
     guid: "",
@@ -41,6 +45,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
     try {
       const response = await fetchApi.postCheckoutForm(checkoutFormData.value)
       if (response.statusCode === 200) {
+        useCookies.setOrderInfoComplete()
         return response
       }
     } catch (error) {
@@ -55,6 +60,12 @@ export const useCheckoutStore = defineStore('checkout', () => {
     try {
       const response = await fetchApi.postCheckoutCash(checkoutCash.value)
       if (response.statusCode === 200) {
+        const completeGuidId = useCookies.getGuidId()
+        useCookies.setCompleteGuidId(completeGuidId)
+        useCookies.clearGuidCookies()
+        useCookies.clearOrderCookies()
+        useCookies.clearOrderInfoCookies()
+        orderStore.resetCartList()
         console.log(response)
         return response
       }

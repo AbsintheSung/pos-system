@@ -2,9 +2,11 @@ import { defineStore } from 'pinia'
 import { fetchApi } from '@/utils/apis/apiUrl'
 import { ref, computed } from 'vue'
 import { deepClone } from '@/utils/deepClone.ts';
-import { setGuidAndOrderId, checkGuidAndOrderIdExist, getCookie } from '@/utils/cookies/guidOrder';
-const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
-const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
+// import { setGuidAndOrderId, checkGuidAndOrderIdExist, getCookie } from '@/utils/cookies/guidOrder';
+import { useCookie } from '@/composables/useCookie'
+const useCookies = useCookie()
+// const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
+// const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
 export const useOrderStore = defineStore('order', () => {
   // const orderId = ref('') //訂單Id，int
   // const guidId = ref('') //訂單識別碼
@@ -32,16 +34,19 @@ export const useOrderStore = defineStore('order', () => {
 
   //第一次加入購物車時候需要獲取唯一的 guid 跟 orderId
   const fetchOrderId = async () => {
-    const isCookieExist = checkGuidAndOrderIdExist()
-    if (isCookieExist) {
-      setOrderCookie()
+    // const isCookieExist = checkGuidAndOrderIdExist()
+    if (useCookies.checkCookiesExist()) {
+      // setOrderCookie()
+      console.log('存在，無須請求')
     } else {
       console.log('請求')
       try {
         const response = await fetchApi.getOrderId()
+        useCookies.setGuidId(response.data.guid)
+        useCookies.setOrderId(response.data.orderId)
         // guidId.value = response.data.guid
         // orderId.value = response.data.orderId
-        setGuidAndOrderId(response.data.guid, response.data.orderId)
+        // setGuidAndOrderId(response.data.guid, response.data.orderId)
       } catch (error) {
         console.log(error)
       }
@@ -50,9 +55,14 @@ export const useOrderStore = defineStore('order', () => {
 
   //添加進購物車
   const fetchProductInOrder = async (data) => {
+    // const setData = {
+    //   guid: getCookie(guidIdCode), // 識別碼
+    //   orderId: Number(getCookie(orderIdCode)), // 訂單編號
+    //   ...data,
+    // }
     const setData = {
-      guid: getCookie(guidIdCode), // 識別碼
-      orderId: Number(getCookie(orderIdCode)), // 訂單編號
+      guid: useCookies.getGuidId(), // 識別碼
+      orderId: Number(useCookies.getOrderId()), // 訂單編號
       ...data,
     }
     try {
@@ -66,9 +76,8 @@ export const useOrderStore = defineStore('order', () => {
   //取得購物車訂單
   const fetchCartOrder = async () => {
     try {
-      orderIdCode
       // const response = await fetchApi.getCartOrder(getOrderId.value, getGuidId.value)
-      const response = await fetchApi.getCartOrder(getCookie(orderIdCode), getCookie(guidIdCode))
+      const response = await fetchApi.getCartOrder(useCookies.getOrderId(), useCookies.getGuidId())
       console.log(response)
       if (response.statusCode === 200) {
         cartList.value = response.data
@@ -80,8 +89,12 @@ export const useOrderStore = defineStore('order', () => {
 
   //將購物車的品項添加數量
   const fetchPlusCart = async (data) => {
+    // const setData = {
+    //   orderId: getCookie(orderIdCode),
+    //   ...data,
+    // }
     const setData = {
-      orderId: getCookie(orderIdCode),
+      orderId: useCookies.getOrderId(),
       ...data,
     }
     try {
@@ -96,8 +109,12 @@ export const useOrderStore = defineStore('order', () => {
 
   //將購物車的品項減少數量
   const fetchMinusCart = async (data) => {
+    // const setData = {
+    //   orderId: getCookie(orderIdCode),
+    //   ...data,
+    // }
     const setData = {
-      orderId: getCookie(orderIdCode),
+      orderId: useCookies.getOrderId(),
       ...data,
     }
     try {
@@ -115,7 +132,7 @@ export const useOrderStore = defineStore('order', () => {
     try {
       // console.log(guidId.value)
       // console.log(getCookie(guidIdCode))
-      const response = await fetchApi.getCompleteOrder(getCookie(guidIdCode))
+      const response = await fetchApi.getCompleteOrder(useCookies.getCompleteGuidId())
       if (response.statusCode === 200) {
         compoleteOrder.value = response.data
       }
@@ -126,6 +143,9 @@ export const useOrderStore = defineStore('order', () => {
 
   }
 
+  const resetCartList = () => {
+    cartList.value = []
+  }
 
 
   //在一開始取得 cookie ( 目的在於使用者發送請求後，再checkout頁面，重新整理的情況 )
@@ -155,5 +175,6 @@ export const useOrderStore = defineStore('order', () => {
     fetchPlusCart,
     fetchMinusCart,
     fetchOneOrder,
+    resetCartList,
   }
 })

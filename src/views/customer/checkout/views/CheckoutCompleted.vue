@@ -57,5 +57,8 @@ onMounted(async () => {
       <p>訂單備註 : {{ orderStore.getCompoleteOrderNote != null ? orderStore.getCompoleteOrderNote : '無' }}</p>
     </div>
   </div>
+  <div>
+    <RouterLink to="/customer">點我返回</RouterLink>
+  </div>
 </template>
 <style scoped></style>
