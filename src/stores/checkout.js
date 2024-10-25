@@ -5,7 +5,7 @@ import { fetchApi } from '@/utils/apis/apiUrl';
 import { useOrderStore } from '@/stores/order.js'
 const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
 const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
-import { useCookie } from '@/composables/useCookie'
+import { useCookie } from '@/composables/useCookie.js'
 const useCookies = useCookie()
 export const useCheckoutStore = defineStore('checkout', () => {
   const orderStore = useOrderStore()
@@ -40,10 +40,12 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   //發送 訂單資訊
   const fetchUpdateCheckout = async () => {
-    checkoutFormData.value.orderId = Number(getCookie(orderIdCode))
-    checkoutFormData.value.guid = getCookie(guidIdCode)
+    checkoutFormData.value.orderId = Number(useCookies.getOrderId())
+    checkoutFormData.value.guid = useCookies.getGuidId()
+    console.log(checkoutFormData.value)
     try {
       const response = await fetchApi.postCheckoutForm(checkoutFormData.value)
+      console.log(response)
       if (response.statusCode === 200) {
         useCookies.setOrderInfoComplete()
         return response
@@ -55,10 +57,11 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   //發送 付款資訊( 現金 )
   const fetchUpdateCheckoutCash = async () => {
-    checkoutCash.value.orderId = Number(getCookie(orderIdCode))
-    checkoutCash.value.guid = getCookie(guidIdCode)
+    checkoutCash.value.orderId = Number(useCookies.getOrderId())
+    checkoutCash.value.guid = useCookies.getGuidId()
     try {
       const response = await fetchApi.postCheckoutCash(checkoutCash.value)
+      console.log(response)
       if (response.statusCode === 200) {
         const completeGuidId = useCookies.getGuidId()
         useCookies.setCompleteGuidId(completeGuidId)
@@ -66,6 +69,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
         useCookies.clearOrderCookies()
         useCookies.clearOrderInfoCookies()
         orderStore.resetCartList()
+        console.log('確認是否移除', useCookies.getOrderId())
         console.log(response)
         return response
       }
