@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
-const dineInNumber = ref(null) //內用桌號
+import { useCheckoutStore } from '@/stores/checkout'
+const checkoutStore = useCheckoutStore()
 </script>
 <template>
   <div class="p-3 flex flex-col gap-y-3">
@@ -12,7 +13,7 @@ const dineInNumber = ref(null) //內用桌號
       </h2>
       <Chip label="必填" class="py-[2px] px-[10px] text-[12px] bg-primary-200"></Chip>
     </div>
-    <InputText type="text" id="dineInNumber" v-model="dineInNumber" placeholder="請填寫桌號" fluid class="rounded-3xl" />
+    <InputText type="text" id="dineInNumber" v-model="checkoutStore.checkoutFormData.table" placeholder="請填寫桌號" fluid class="rounded-3xl" />
   </div>
 </template>
 <style scoped></style>

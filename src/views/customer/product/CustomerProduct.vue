@@ -2,6 +2,7 @@
 import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/product.js'
+import { useOrderStore } from '@/stores/order.js'
 import Chip from 'primevue/chip'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
@@ -10,10 +11,11 @@ import CustomerContainer from '@/layout/CustomerContainer.vue'
 import CustomerProductRaddio from '@/components/customer/product/CustomerProductRaddio.vue'
 import CustomerProductCheckBox from '@/components/customer/product/CustomerProductCheckBox.vue'
 import CustomerFooter from '@/components/customer/footer/CustomerFooter.vue'
+import router from '@/router'
 const productStore = useProductStore()
+const orderStore = useOrderStore()
 const route = useRoute()
 const productId = route.params.id
-const test = ref({})
 const userInputData = ref({
   // 1-冰塊，2-冰塊(限冷飲)，3-甜度，4-燕麥奶更換，5-鮮奶油，6加購點心
   1: {
@@ -63,7 +65,7 @@ const customization = computed(() => {
         const foundItem = productStore.getDessertOptions.find((testItem) => testItem.name === item)
         if (foundItem) {
           result.push({
-            option: foundItem.name,
+            options: foundItem.name,
             extraPrice: foundItem.price
           })
         }
@@ -71,7 +73,7 @@ const customization = computed(() => {
     } else {
       // 處理其他普通選項
       const optionValue = userInputData.value[id].option
-      result.push({ option: optionValue })
+      result.push({ options: optionValue })
     }
   })
 
@@ -92,20 +94,19 @@ const handlePlus = () => {
   userInputData.value.serving++
 }
 async function handleViewMeals() {
+  await orderStore.fetchOrderId()
   const finalData = {
-    guid: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', // 識別碼
-    orderId: 1, // 訂單編號
-    productId: 1, // 商品編號
+    // guid: orderStore.getGuidId, // 識別碼
+    // orderId: Number(orderStore.getOrderId), // 訂單編號
+    productId: Number(productId), // 商品編號 ( 此productId router獲取 )
     customization: customization.value, // 客製化選項
     serving: userInputData.value.serving // 份數
   }
-  test.value = finalData
-  // await orderStore.fetchOrderId()
-  // 可以在這裡將 `finalData` 發送給後端
+  await orderStore.fetchProductInOrder(finalData)
+  router.push('/customer/menu')
 }
 onMounted(async () => {
   await productStore.fetchProductData(productId)
-  console.log(productStore.getProductData)
 })
 </script>
 <template>
@@ -118,7 +119,6 @@ onMounted(async () => {
         <img :src="productStore.getProductData.productImagePath" />
       </div>
       <div class="px-3 py-6 flex flex-col gap-y-6">
-        <!-- {{ test }} -->
         <div class="flex flex-col gap-y-2">
           <h2 class="font-bold">{{ productStore.getProductData.name }}</h2>
           <div class="flex items-center mt-auto">

@@ -12,6 +12,7 @@ import CustomerCheckout from '@customer/checkout/CustomerCheckout.vue'
 import CheckoutOrder from '@customer/checkout/views/CheckoutOrder.vue'
 import CheckoutPayment from '@customer/checkout/views/CheckoutPayment.vue'
 import CheckoutCompleted from '@customer/checkout/views/CheckoutCompleted.vue'
+import CheckoutLine from '@customer/checkout/views/CheckoutLine.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior() {
@@ -58,6 +59,11 @@ const router = createRouter({
               path: 'completed',
               name: 'CheckoutCompleted',
               component: CheckoutCompleted
+            },
+            {
+              path: 'linepay',
+              name: 'LinePayCheckout',
+              component: CheckoutLine
             },
           ]
         }

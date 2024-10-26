@@ -26,24 +26,38 @@ async function customFetch(url: string, options: RequestOptions = {}) {
 		headers,
 	});
 
-	//無配置反向代理
-	// const response = await fetch(`${baseURL}${url}`, {
-	// 	...customOptions,
-	// 	headers,
-	// });
+	// 先檢查狀態碼
+	if (!response.ok) {
+		//針對不同狀態碼拋出不同的錯誤
+		switch (response.status) {
+			case 401:
+				throw new Error('未授權訪問');
+			case 403:
+				throw new Error('禁止訪問');
+			case 404:
+				throw new Error('資源未找到');
+			case 500:
+				throw new Error('服務器錯誤');
+			default:
+				throw new Error(`HTTP error! status: ${response.status}`);
+		}
+	}
 
-	// //處理401
-	// if (response.status === 400) {
+	try {
+		const data = await response.json();
+		// 檢查業務邏輯錯誤（假設後端返回格式包含 success 字段）
+		if (data && data.success === false) {
+			throw new Error(data.message || '業務邏輯錯誤');
+		}
+		return data;
+	} catch (error) {
+		// 處理 JSON 解析錯誤
+		if (error instanceof SyntaxError) {
+			throw new Error('Invalid JSON response');
+		}
+		throw error; // 重新拋出其他錯誤
+	}
 
-	//     throw new Error('Unauthorized');
-	// }
-
-	// // 如果失敗，丟出錯誤
-	// if (!response.ok) {
-	//     throw new Error(`HTTP error! status: ${response.status}`);
-	// }
-
-	return response.json();
 }
 
 export default {
