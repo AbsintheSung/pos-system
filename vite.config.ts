@@ -31,7 +31,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      [`/${apiName}`]: {
+      [`${apiName}`]: {
         target: baseURL,
         changeOrigin: true,
         secure: false,
