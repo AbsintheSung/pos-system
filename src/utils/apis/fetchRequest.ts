@@ -25,7 +25,7 @@ async function customFetch(url: string, options: RequestOptions = {}) {
 	// 	...customOptions,
 	// 	headers,
 	// });
-	const response = await fetch(`${url}`, {
+	const response = await fetch(`/${url}`, {
 		...customOptions,
 		headers,
 	});
