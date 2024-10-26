@@ -1,11 +1,20 @@
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useOrderStore } from '@/stores/order.js'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
-import ColumnGroup from 'primevue/columngroup' // optional
-import Row from 'primevue/row' // optional
+import { useElementBounding } from '@vueuse/core'
+import { useRouter } from 'vue-router'
+import Button from 'primevue/button'
+const footerButtonDiv = ref(null)
+const getFooterButtonDiv = useElementBounding(footerButtonDiv)
 const orderStore = useOrderStore()
+const router = useRouter()
+
+const handleBuyAgain = () => {
+  console.log('再買一次')
+}
+const handlePageTumHome = () => {
+  router.push('/customer')
+}
 onMounted(async () => {
   await orderStore.fetchOneOrder()
 })
@@ -58,7 +67,18 @@ onMounted(async () => {
     </div>
   </div>
   <div>
-    <RouterLink to="/customer">點我返回</RouterLink>
+    <div :style="{ paddingTop: `${getFooterButtonDiv.height.value}px` }"></div>
+    <div
+      class="flex flex-col items-center gap-y-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500 font-medium"
+      ref="footerButtonDiv"
+    >
+      <Button class="w-full py-2 bg-primary-700 rounded-3xl border-transparent flex-grow flex items-center justify-center" @click="handleBuyAgain">
+        <p>再點一次</p>
+      </Button>
+      <Button class="w-full py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950" @click="handlePageTumHome">
+        <p>回到首頁</p>
+      </Button>
+    </div>
   </div>
 </template>
 <style scoped></style>

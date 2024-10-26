@@ -78,6 +78,7 @@ export const useOrderStore = defineStore('order', () => {
     try {
       // const response = await fetchApi.getCartOrder(getOrderId.value, getGuidId.value)
       const response = await fetchApi.getCartOrder(useCookies.getOrderId(), useCookies.getGuidId())
+      console.log(useCookies.getOrderId(), useCookies.getGuidId())
       console.log(response)
       if (response.statusCode === 200) {
         cartList.value = response.data

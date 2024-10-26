@@ -95,10 +95,10 @@ onMounted(() => {
     <CheckoutOrderContent />
     <SpecialNeeds />
   </div>
-  <div v-else>
-    <div class="p-3 flex flex-col gap-y-2">
+  <div v-else class="flex flex-col flex-grow h-full">
+    <div class="h-full p-3 flex-grow flex flex-col gap-y-2">
       <h2 class="font-bold text-xl">訂單內容</h2>
-      <div class="py-3 flex items-center justify-center gap-x-2 bg-neutral-200 rounded-lg">
+      <div class="h-full flex-grow flex items-center justify-center gap-x-2 bg-neutral-200 rounded-lg">
         <img :src="failcupImg" alt="無訂單圖片icon" class="w-12 h-12" />
         <p class="font-medium">肚子空空的，趕快去點餐！</p>
       </div>
@@ -109,7 +109,7 @@ onMounted(() => {
   <div>
     <div :style="{ paddingTop: `${getFooterButtonDiv.height.value}px` }"></div>
     <div
-      class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500"
+      class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500 font-medium"
       ref="footerButtonDiv"
     >
       <Button class="py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950" @click="handlePreviousStage"><p>繼續點餐</p></Button>

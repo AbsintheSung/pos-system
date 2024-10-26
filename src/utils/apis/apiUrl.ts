@@ -11,6 +11,8 @@ const postEditCart = `${urlName}/customer/editCart` // 編輯商品購物車數�
 const postCheckoutForm = `${urlName}/customer/goCheckout` //存入使用者輸入表單的內容
 const postCheckoutCash = `${urlName}/customer/confirmOrderCash` //使用 現金方式付款
 const getCompleteOrder = `${urlName}/customer/getOrder` //取得 訂單完成資訊
+const postCheckoutLinePay = `${urlName}/customer/confirmOrderLinePay` //使用 linePay方式付款
+const postCheckoutLinePatState = `${urlName}/customer/confirmLinePayRequest`
 
 //匯出 api方法
 export const fetchApi = {
@@ -24,5 +26,7 @@ export const fetchApi = {
 	postCheckoutForm: (data: any) => api.post(postCheckoutForm, data),
 	postCheckoutCash: (data: any) => api.post(postCheckoutCash, data),
 	getCompleteOrder: (guid: any) => api.get(`${getCompleteOrder}/${guid}`),
+	postCheckoutLinePay: (data: any) => api.post(postCheckoutLinePay, data),
+	postCheckoutLinePatState: (data: any) => api.post(postCheckoutLinePatState, data),
 	// ... 其他 API
 }

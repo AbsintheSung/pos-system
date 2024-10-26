@@ -1,10 +1,11 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-import { getCookie } from '@/utils/cookies/guidOrder';
+// import { getCookie } from '@/utils/cookies/guidOrder';
 import { fetchApi } from '@/utils/apis/apiUrl';
 import { useOrderStore } from '@/stores/order.js'
-const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
-const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
+const linePayCompleteUrl = import.meta.env.VITE_APP_CHECKOUT_LINEPAY_URL
+// const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
+// const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
 import { useCookie } from '@/composables/useCookie.js'
 const useCookies = useCookie()
 export const useCheckoutStore = defineStore('checkout', () => {
@@ -36,6 +37,14 @@ export const useCheckoutStore = defineStore('checkout', () => {
     "guid": '',
     "invoice": '',  //發票類型 1"載具" 2"統編" 3"捐贈發票" 4"紙本"
     "invoiceCarrier": "" //發票載具號碼or統編
+  })
+  const checkoutLinePay = ref({
+    "orderId": 0,
+    "guid": '',
+    "invoice": "",  //發票類型 1"載具" 2"統編" 3"捐贈發票" 4"紙本"
+    "invoiceCarrier": "", //發票載具號碼or統編
+    "confirmUrl": `${linePayCompleteUrl}`, //LinePay付款成功後，Line會導向使用者去的網址
+    "cancelUrl": ""   //LinePay取消付款後，Line會導向使用者去的網址
   })
 
   //發送 訂單資訊
@@ -69,9 +78,46 @@ export const useCheckoutStore = defineStore('checkout', () => {
         useCookies.clearOrderCookies()
         useCookies.clearOrderInfoCookies()
         orderStore.resetCartList()
-        console.log('確認是否移除', useCookies.getOrderId())
-        console.log(response)
+        resetForm()
         return response
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  //發送 付款資訊( LinePay )
+  const fetchUpdateCheckoutLinePay = async () => {
+    checkoutLinePay.value.orderId = Number(useCookies.getOrderId())
+    checkoutLinePay.value.guid = useCookies.getGuidId()
+    try {
+      const response = await fetchApi.postCheckoutLinePay(checkoutLinePay.value)
+      console.log(response)
+      if (response.statusCode === 200) {
+        return response
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const fetchCheckoutLinePayState = async () => {
+    const data = {
+      orderId: Number(useCookies.getOrderId()),
+      guid: useCookies.getGuidId()
+    }
+    console.log('付款linePay頁面', data)
+    try {
+      const response = await fetchApi.postCheckoutLinePatState(data)
+      console.log(response)
+      if (response.statusCode === 200) {
+        const completeGuidId = useCookies.getGuidId()
+        useCookies.setCompleteGuidId(completeGuidId)
+        useCookies.clearGuidCookies()
+        useCookies.clearOrderCookies()
+        useCookies.clearOrderInfoCookies()
+        orderStore.resetCartList()
+        resetForm()
+        return response.data.isPayMent
       }
     } catch (error) {
       console.log(error)
@@ -86,8 +132,11 @@ export const useCheckoutStore = defineStore('checkout', () => {
   return {
     checkoutFormData,
     checkoutCash,
+    checkoutLinePay,
     resetForm,
     fetchUpdateCheckout,
-    fetchUpdateCheckoutCash
+    fetchUpdateCheckoutCash,
+    fetchUpdateCheckoutLinePay,
+    fetchCheckoutLinePayState
   }
 })

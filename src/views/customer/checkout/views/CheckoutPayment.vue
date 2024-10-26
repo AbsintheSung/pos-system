@@ -54,22 +54,41 @@ const handleReceipt = (val) => {
   if (val === ReceiptStates.PHONE_CARRIER || val === ReceiptStates.UNIFIED_NUMBER) {
     receiptOptions.value[index].hasInput = true
   }
-  checkoutStore.checkoutCash.invoice = val
-  checkoutStore.checkoutCash.invoiceCarrier = ''
+  if (payState.value === PayStates.CASH_PAYMENT) {
+    checkoutStore.checkoutCash.invoice = val
+    checkoutStore.checkoutCash.invoiceCarrier = ''
+  }
+  if (payState.value === PayStates.LINE_PAYMENT) {
+    checkoutStore.checkoutLinePay.invoice = val
+    checkoutStore.checkoutLinePay.invoiceCarrier = ''
+  }
+  // checkoutStore.checkoutCash.invoice = val
+  // checkoutStore.checkoutCash.invoiceCarrier = ''
 }
 
 const handlePay = (val) => {
   windowScrollY.value = 0
-  console.log(val)
+  selectedReceipt.value = ReceiptStates.PAPER_RECEIPT
 }
 
 const handleNextStage = async () => {
-  // windowScrollY.value = 0
-  // router.push('/customer/checkout/payment')
-  const response = await checkoutStore.fetchUpdateCheckoutCash()
-  if (response.statusCode === 200) {
-    router.push('/customer/checkout/completed')
+  if (payState.value === PayStates.CASH_PAYMENT) {
+    const response = await checkoutStore.fetchUpdateCheckoutCash()
+    if (response.statusCode === 200) {
+      router.push('/customer/checkout/completed')
+    }
   }
+  if (payState.value === PayStates.LINE_PAYMENT) {
+    const response = await checkoutStore.fetchUpdateCheckoutLinePay()
+    if (response.statusCode === 200) {
+      window.location.href = response.data.paymentUrl
+      // router.push('/customer/checkout/completed')
+    }
+  }
+  // const response = await checkoutStore.fetchUpdateCheckoutCash()
+  // if (response.statusCode === 200) {
+  //   router.push('/customer/checkout/completed')
+  // }
 }
 const handlePreviousStage = () => {
   // windowScrollY.value = 0
@@ -82,12 +101,12 @@ onMounted(() => {
   }
   checkoutStore.checkoutCash.invoice = selectedReceipt.value
 })
-// watch(
-//   () => selectedReceipt.value,
-//   () => {
-//     checkoutStore.checkoutCash.invoiceCarrier = ''
-//   }
-// )
+watch(
+  () => payState.value,
+  () => {
+    receiptOptions.value.forEach((item) => (item.hasInput = false))
+  }
+)
 </script>
 <template>
   <div class="p-3 flex flex-col gap-y-2">
@@ -160,7 +179,7 @@ onMounted(() => {
   <div>
     <div :style="{ paddingTop: `${getFooterButtonDiv.height.value}px` }"></div>
     <div
-      class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500"
+      class="flex items-center gap-x-3 px-3 py-4 fixed bottom-0 mx-auto w-full max-w-screen-sm bg-primary-50 z-10 border-t border-neutral-500 font-medium"
       ref="footerButtonDiv"
     >
       <Button class="py-2 px-3 bg-neutral-50 rounded-3xl border-neutral-200 text-neutral-950" @click="handlePreviousStage"><p>上一步</p></Button>
