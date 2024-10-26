@@ -6,13 +6,13 @@ const getMenuList = `/${urlName}/customer/getMenuItem` //取得菜單
 const getProduct = `/${urlName}/customer/getProduct`//取得單一商品
 const getOrderId = `/${urlName}/customer/getOrderId`//第一次加入時候，需取得guid碼 跟 id
 const posteProduct = `/${urlName}/customer/addItem` //將商品加入購物車
-const getCartOrder = `${urlName}/customer/getCart` //取得購物車訂單
-const postEditCart = `${urlName}/customer/editCart` // 編輯商品購物車數量
-const postCheckoutForm = `${urlName}/customer/goCheckout` //存入使用者輸入表單的內容
-const postCheckoutCash = `${urlName}/customer/confirmOrderCash` //使用 現金方式付款
-const getCompleteOrder = `${urlName}/customer/getOrder` //取得 訂單完成資訊
-const postCheckoutLinePay = `${urlName}/customer/confirmOrderLinePay` //使用 linePay方式付款
-const postCheckoutLinePatState = `${urlName}/customer/confirmLinePayRequest`
+const getCartOrder = `/${urlName}/customer/getCart` //取得購物車訂單
+const postEditCart = `/${urlName}/customer/editCart` // 編輯商品購物車數量
+const postCheckoutForm = `/${urlName}/customer/goCheckout` //存入使用者輸入表單的內容
+const postCheckoutCash = `/${urlName}/customer/confirmOrderCash` //使用 現金方式付款
+const getCompleteOrder = `/${urlName}/customer/getOrder` //取得 訂單完成資訊
+const postCheckoutLinePay = `/${urlName}/customer/confirmOrderLinePay` //使用 linePay方式付款
+const postCheckoutLinePatState = `/${urlName}/customer/confirmLinePayRequest`
 
 //匯出 api方法
 export const fetchApi = {
