@@ -9,7 +9,6 @@ dotenv.config();
 // 使用環境變數
 const baseURL = process.env.VITE_APP_API_URL;
 const apiName = process.env.VITE_APP_API_NAME;
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -31,11 +30,11 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      [`${apiName}`]: {
+      [`/${apiName}`]: {
         target: baseURL,
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(`/${apiName}`, ''),
+        // rewrite: (path) => path.replace(`/${apiName}`, ''),
       },
       // '/Images': {
       //   target: baseURL,
