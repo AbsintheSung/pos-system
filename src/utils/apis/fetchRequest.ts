@@ -21,14 +21,11 @@ async function customFetch(url: string, options: RequestOptions = {}) {
 	}
 
 	//配置反向代理
-	// const response = await fetch(`${baseURL}/${url}`, {
-	// 	...customOptions,
-	// 	headers,
-	// });
-	const response = await fetch(`/${url}`, {
+	const response = await fetch(`${baseURL}/${url}`, {
 		...customOptions,
 		headers,
 	});
+
 
 	// 先檢查狀態碼
 	if (!response.ok) {
