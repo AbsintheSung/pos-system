@@ -79,7 +79,7 @@ const navigation = computed(() => {
 })
 </script>
 <template>
-  <nav class="p-3 bg-primary-700">
+  <nav class="p-3 bg-primary-700 transition-all duration-300 ease-in-out">
     <ul class="flex gap-x-4 items-center">
       <li v-for="(button, index) in navigation" :key="button.label" :class="button.liClass">
         <template v-if="index != 2">
