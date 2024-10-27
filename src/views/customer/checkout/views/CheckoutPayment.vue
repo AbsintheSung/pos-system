@@ -188,7 +188,7 @@ watch(
         @click="handleNextStage"
         :disabled="orderStore.getCartListLength === 0"
       >
-        <p class="border border-neutral-50 px-2 rounded-md">1</p>
+        <p class="border border-neutral-50 px-2 rounded-md">{{ orderStore.getCartTotalServing }}</p>
         <p>送出訂單</p>
         <p>$ {{ orderStore.getCartTotalPrice }}</p>
       </Button>

@@ -1,5 +1,7 @@
 <script setup>
+import { ref } from 'vue'
 import { useMenuStore } from '@/stores/menu.js'
+import { useWindowScroll } from '@vueuse/core'
 import CustomerCard from '@/components/customer/menu/CustomerCard.vue'
 import CustomerCardSkeleton from '@/components/global/CustomerCardSkeleton.vue'
 import Tabs from 'primevue/tabs'
@@ -8,6 +10,8 @@ import Tab from 'primevue/tab'
 import TabPanels from 'primevue/tabpanels'
 import TabPanel from 'primevue/tabpanel'
 const menuStore = useMenuStore()
+const windowScroll = useWindowScroll()
+const windowScrollY = ref(windowScroll.y)
 defineProps({
   isHeaderListFixed: {
     type: String,
@@ -18,6 +22,9 @@ defineProps({
     default: 0
   }
 })
+const handleTabList = () => {
+  windowScrollY.value = 0
+}
 </script>
 <template>
   <div class="px-3 py-6">
@@ -29,6 +36,7 @@ defineProps({
         pt:activeBar:class="bg-primary-700"
         :class="isHeaderListFixed"
         :style="{ top: getNavHeight + 'px' }"
+        @click="handleTabList"
       >
         <Tab
           v-for="(categoryItem, index) in menuStore.getMenuCategory"

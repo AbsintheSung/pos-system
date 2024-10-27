@@ -17,6 +17,7 @@ export const useOrderStore = defineStore('order', () => {
   // const getGuidId = computed(() => guidId.value)
   const getCartList = computed(() => deepClone(cartList.value))
   const getCartListLength = computed(() => cartList.value.length)
+  const getCartTotalServing = computed(() => cartList.value.reduce((serving, item) => serving + item.serving, 0))
   const getCartTotalPrice = computed(() => {
     console.log(cartList)
     return cartList.value.reduce((total, item) => total + item.price * item.serving, 0)
@@ -67,6 +68,9 @@ export const useOrderStore = defineStore('order', () => {
     }
     try {
       const response = await fetchApi.posteProduct(setData)
+      if (response.statusCode === 200) {
+        await fetchCartOrder() //添加成功後，再發送取得購物車資訊
+      }
       console.log(response)
     } catch (error) {
       console.log(error)
@@ -158,6 +162,7 @@ export const useOrderStore = defineStore('order', () => {
     // getOrderId,
     // getGuidId,
     getCartList,
+    getCartTotalServing,
     getCartTotalPrice,
     getCartListLength,
     getCompoleteOrderList,
