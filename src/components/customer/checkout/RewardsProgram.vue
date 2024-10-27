@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
-import { useCheckoutStore } from '@/stores/checkout'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 const checkoutStore = useCheckoutStore()
 const rewardPoints = ref(null) //集點
 </script>

@@ -1,7 +1,7 @@
 <script setup>
 import Chip from 'primevue/chip'
 import Textarea from 'primevue/textarea'
-import { useCheckoutStore } from '@/stores/checkout'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 const checkoutStore = useCheckoutStore()
 </script>
 <template>

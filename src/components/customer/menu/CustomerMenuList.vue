@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useMenuStore } from '@/stores/menu.js'
+import { useMenuStore } from '@/stores/customer/menu'
 import { useWindowScroll } from '@vueuse/core'
 import CustomerCard from '@/components/customer/menu/CustomerCard.vue'
 import CustomerCardSkeleton from '@/components/global/CustomerCardSkeleton.vue'

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useOrderStore } from '@/stores/order.js'
+import { useOrderStore } from '@/stores/customer/order'
 import { useElementBounding } from '@vueuse/core'
 import { useRouter } from 'vue-router'
 import Button from 'primevue/button'

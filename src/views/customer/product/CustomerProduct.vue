@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useProductStore } from '@/stores/product.js'
-import { useOrderStore } from '@/stores/order.js'
+import { useProductStore } from '@/stores/customer/product'
+import { useOrderStore } from '@/stores/customer/order'
 import { useScroll } from '@vueuse/core'
 import Chip from 'primevue/chip'
 import Button from 'primevue/button'

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useOrderStore } from '@/stores/order.js'
+import { useOrderStore } from '@/stores/customer/order'
 import Button from 'primevue/button'
 import Badge from 'primevue/badge'
 import OverlayBadge from 'primevue/overlaybadge'

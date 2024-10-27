@@ -3,20 +3,20 @@ import { ref } from 'vue'
 import Chip from 'primevue/chip'
 import DatePicker from 'primevue/datepicker'
 import dayjs from 'dayjs'
-import { useCheckoutStore } from '@/stores/checkout'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 const checkoutStore = useCheckoutStore()
 const reserveDate = ref() //遇缺自取-時間(日)
 const updateDate = () => {
   const now = dayjs(reserveDate.value)
-  const formattedDate = now.format('YYYY-MM-DD') 
-  const formattedTime = now.format('HH:mm') 
+  const formattedDate = now.format('YYYY-MM-DD')
+  const formattedTime = now.format('HH:mm')
   checkoutStore.checkoutFormData.takeDate = formattedDate
   checkoutStore.checkoutFormData.takeTime = formattedTime
   console.log(checkoutStore.checkoutFormData)
 }
 const updateTime = () => {
   const now = dayjs(reserveDate.value)
-  const formattedTime = now.format('HH:mm') 
+  const formattedTime = now.format('HH:mm')
   checkoutStore.checkoutFormData.takeTime = formattedTime
   console.log(checkoutStore.checkoutFormData)
 }

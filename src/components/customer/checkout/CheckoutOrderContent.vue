@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
-import { useOrderStore } from '@/stores/order.js'
+import { useOrderStore } from '@/stores/customer/order'
 const orderStore = useOrderStore()
 const buttonDisable = ref(false)
 

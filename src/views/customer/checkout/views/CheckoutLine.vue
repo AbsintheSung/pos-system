@@ -1,5 +1,5 @@
 <script setup>
-import { useCheckoutStore } from '@/stores/checkout'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 const checkoutStore = useCheckoutStore()

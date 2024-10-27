@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
-import { useCheckoutStore } from '@/stores/checkout'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 const checkoutStore = useCheckoutStore()
 
 const reserveDate = ref() //遇缺自取-時間(日)
