@@ -1,16 +1,13 @@
+
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
-// import { getCookie } from '@/utils/cookies/guidOrder';
 import { fetchApi } from '@/utils/apis/apiUrl';
-import { useOrderStore } from '@/stores/order.js'
-const linePayCompleteUrl = import.meta.env.VITE_APP_CHECKOUT_LINEPAY_URL
-// const guidIdCode = import.meta.env.VITE_APP_GUID_NAME;
-// const orderIdCode = import.meta.env.VITE_APP_ORDERID_NAME;
+import { useOrderStore } from '@/stores/customer/order.js'
 import { useCookie } from '@/composables/useCookie.js'
+const linePayCompleteUrl = import.meta.env.VITE_APP_CHECKOUT_LINEPAY_URL
 const useCookies = useCookie()
 export const useCheckoutStore = defineStore('checkout', () => {
   const orderStore = useOrderStore()
-  // const isFormComplete = ref(false)
   const initialFormState = {
     orderId: 0,
     guid: "",

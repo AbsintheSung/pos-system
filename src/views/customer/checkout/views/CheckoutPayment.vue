@@ -3,8 +3,8 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useWindowScroll } from '@vueuse/core'
 import { useElementBounding } from '@vueuse/core'
-import { useOrderStore } from '@/stores/order.js'
-import { useCheckoutStore } from '@/stores/checkout'
+import { useOrderStore } from '@/stores/customer/order'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 import { useCookie } from '@/composables/useCookie'
 import SelectButton from 'primevue/selectbutton'
 import Card from 'primevue/card'
@@ -62,8 +62,6 @@ const handleReceipt = (val) => {
     checkoutStore.checkoutLinePay.invoice = val
     checkoutStore.checkoutLinePay.invoiceCarrier = ''
   }
-  // checkoutStore.checkoutCash.invoice = val
-  // checkoutStore.checkoutCash.invoiceCarrier = ''
 }
 
 const handlePay = (val) => {
@@ -85,13 +83,8 @@ const handleNextStage = async () => {
       // router.push('/customer/checkout/completed')
     }
   }
-  // const response = await checkoutStore.fetchUpdateCheckoutCash()
-  // if (response.statusCode === 200) {
-  //   router.push('/customer/checkout/completed')
-  // }
 }
 const handlePreviousStage = () => {
-  // windowScrollY.value = 0
   router.push('/customer/checkout/orderinfo')
 }
 

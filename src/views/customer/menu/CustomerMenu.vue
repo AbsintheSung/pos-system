@@ -9,12 +9,12 @@ import CustomerHeaderInput from '@/components/customer/header/CustomerHeaderInpu
 import CustomerContainer from '@/layout/CustomerContainer.vue'
 import CustomerMenuList from '@/components/customer/menu/CustomerMenuList.vue'
 import CustomerFooter from '@/components/customer/footer/CustomerFooter.vue'
-const isDrawerOpen = ref(false) //控制Drawer的開啟&關閉
 const { y } = useScroll(window) //使用 vueUse的函式庫，取得裝置垂直值的響應式變化
 const headerNav = ref(null)
 const headerInput = ref(null)
 const headerInfo = ref(null)
 const customerContainer = ref(null)
+const isDrawerOpen = ref(false) //控制Drawer的開啟&關閉
 const getHeaderNav = useElementBounding(headerNav)
 const getHeaderInput = useElementBounding(headerInput)
 const getHeaderInfo = useElementBounding(headerInfo)

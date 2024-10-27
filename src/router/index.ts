@@ -1,10 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CarouselPage from '@/views/CarouselPage.vue'
-// import CustomerMenuPage from '@/views/customer/CustomerMenuPage.vue'
-// import CustomerIndex from '@/views/customer/CustomerIndex.vue'
-// import CustomerProductPage from '@/views/customer/CustomerProductPage.vue'
-// import CustomerCheckoutPage from '@/views/customer/CustomerCheckoutPage.vue'
-
 import CustomerIndex from "@customer/CustomerIndex.vue"
 import CustomerMenu from '@customer/menu/CustomerMenu.vue'
 import CustomerProduct from '@customer/product/CustomerProduct.vue'
