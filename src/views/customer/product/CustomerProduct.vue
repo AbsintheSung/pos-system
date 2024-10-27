@@ -3,6 +3,7 @@ import { onMounted, ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/product.js'
 import { useOrderStore } from '@/stores/order.js'
+import { useScroll } from '@vueuse/core'
 import Chip from 'primevue/chip'
 import Button from 'primevue/button'
 import Textarea from 'primevue/textarea'
@@ -16,6 +17,7 @@ const productStore = useProductStore()
 const orderStore = useOrderStore()
 const route = useRoute()
 const productId = route.params.id
+const { y } = useScroll(window) //使用 vueUse的函式庫，取得裝置垂直值的響應式變化
 const userInputData = ref({
   // 1-冰塊，2-冰塊(限冷飲)，3-甜度，4-燕麥奶更換，5-鮮奶油，6加購點心
   1: {
@@ -86,6 +88,8 @@ const customization = computed(() => {
   return result
 })
 
+const isHeaderNavFixed = computed(() => (y.value > 0 ? 'fixed w-full z-20 max-w-screen-sm' : ''))
+
 const handleMinus = () => {
   if (userInputData.value.serving === 1) return
   userInputData.value.serving--
@@ -112,7 +116,7 @@ onMounted(async () => {
 <template>
   <CustomerContainer ref="customerContainer">
     <template #header>
-      <CustomerHeaderNav />
+      <CustomerHeaderNav :class="isHeaderNavFixed" />
     </template>
     <template #default>
       <div>
@@ -163,7 +167,7 @@ onMounted(async () => {
             <div>
               <Button class="bg-primary-700 rounded-3xl flex items-center justify-between" fluid @click="handleViewMeals">
                 <p class="border border-neutral-50 px-2 rounded-md">{{ userInputData.serving }}</p>
-                <p>查看已選餐點</p>
+                <p>將餐點加入</p>
                 <p>${{ totalPrice }}</p>
               </Button>
             </div>
