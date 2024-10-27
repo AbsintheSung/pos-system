@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useElementBounding } from '@vueuse/core'
 import { useWindowScroll } from '@vueuse/core'
 import { useCheckoutStore } from '@/stores/customer/checkout'
@@ -8,9 +8,6 @@ import { useOrderStore } from '@/stores/customer/order'
 import Button from 'primevue/button'
 import SelectButton from 'primevue/selectbutton'
 import CheckoutOrderForm from '@/components/customer/checkout/CheckoutOrderForm.vue'
-import DineInInput from '@/components/customer/checkout/DineInInput.vue'
-import CustomPickUpDate from '@/components/customer/checkout/CustomPickUpDate.vue'
-import RewardsProgram from '@/components/customer/checkout/RewardsProgram.vue'
 import CheckoutOrderContent from '@/components/customer/checkout/CheckoutOrderContent.vue'
 import SpecialNeeds from '@/components/customer/checkout/SpecialNeeds.vue'
 import failcupImg from '@/assets/images/other/failcup.png'
@@ -89,9 +86,6 @@ onMounted(() => {
 
   <div v-if="orderStore.getCartListLength != 0">
     <CheckoutOrderForm :getPickUpFoodState="getPickUpFoodState" />
-    <!-- <DineInInput v-show="getPickUpFoodState.dineInSection" /> -->
-    <!-- <CustomPickUpDate v-show="getPickUpFoodState.reserveSection" /> -->
-    <!-- <RewardsProgram /> -->
     <CheckoutOrderContent />
     <SpecialNeeds />
   </div>

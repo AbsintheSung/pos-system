@@ -1,10 +1,8 @@
 <script setup>
-import { ref } from 'vue'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
-import { useCheckoutStore } from '@/stores/customer/checkout'
 const checkoutStore = useCheckoutStore()
-const rewardPoints = ref(null) //集點
 </script>
 <template>
   <div class="p-3 flex flex-col gap-y-3">

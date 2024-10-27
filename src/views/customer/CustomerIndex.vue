@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import { useMenuStore } from '@/stores/menu.js'
-import { useOrderStore } from '@/stores/order.js'
+import { useMenuStore } from '@/stores/customer/menu'
+import { useOrderStore } from '@/stores/customer/order'
 const menuStore = useMenuStore()
 const orderStore = useOrderStore()
 onMounted(async () => {

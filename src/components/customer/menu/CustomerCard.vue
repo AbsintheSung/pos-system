@@ -1,7 +1,7 @@
 <script setup>
 import Card from 'primevue/card'
 import Chip from 'primevue/chip'
-const props = defineProps({
+defineProps({
   getCategoryItem: {
     type: Array,
     default: () => []

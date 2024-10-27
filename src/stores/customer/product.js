@@ -1,6 +1,6 @@
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { fetchApi } from '@/utils/apis/apiUrl'
-import { ref, computed } from 'vue'
 import { deepClone } from '@/utils/deepClone.ts';
 export const useProductStore = defineStore('product', () => {
   const productData = ref({})

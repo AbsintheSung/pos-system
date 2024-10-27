@@ -1,9 +1,10 @@
 <script setup>
 import { ref } from 'vue'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 import Chip from 'primevue/chip'
 import DatePicker from 'primevue/datepicker'
 import dayjs from 'dayjs'
-import { useCheckoutStore } from '@/stores/customer/checkout'
+
 const checkoutStore = useCheckoutStore()
 const reserveDate = ref() //遇缺自取-時間(日)
 const updateDate = () => {

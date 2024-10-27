@@ -62,8 +62,6 @@ const handleReceipt = (val) => {
     checkoutStore.checkoutLinePay.invoice = val
     checkoutStore.checkoutLinePay.invoiceCarrier = ''
   }
-  // checkoutStore.checkoutCash.invoice = val
-  // checkoutStore.checkoutCash.invoiceCarrier = ''
 }
 
 const handlePay = (val) => {
@@ -85,13 +83,8 @@ const handleNextStage = async () => {
       // router.push('/customer/checkout/completed')
     }
   }
-  // const response = await checkoutStore.fetchUpdateCheckoutCash()
-  // if (response.statusCode === 200) {
-  //   router.push('/customer/checkout/completed')
-  // }
 }
 const handlePreviousStage = () => {
-  // windowScrollY.value = 0
   router.push('/customer/checkout/orderinfo')
 }
 

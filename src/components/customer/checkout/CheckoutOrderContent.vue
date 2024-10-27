@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useOrderStore } from '@/stores/customer/order'
 import Button from 'primevue/button'
 import Card from 'primevue/card'
-import { useOrderStore } from '@/stores/customer/order'
 const orderStore = useOrderStore()
 const buttonDisable = ref(false)
 

@@ -1,12 +1,12 @@
 <script setup>
 import { ref, watch } from 'vue'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 import dayjs from 'dayjs'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
 import DatePicker from 'primevue/datepicker'
-import { useCheckoutStore } from '@/stores/customer/checkout'
-const checkoutStore = useCheckoutStore()
 
+const checkoutStore = useCheckoutStore()
 const reserveDate = ref() //遇缺自取-時間(日)
 const updateDate = () => {
   const now = dayjs(reserveDate.value)

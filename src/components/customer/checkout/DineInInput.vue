@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useCheckoutStore } from '@/stores/customer/checkout'
 import Chip from 'primevue/chip'
 import InputText from 'primevue/inputtext'
-import { useCheckoutStore } from '@/stores/customer/checkout'
 const checkoutStore = useCheckoutStore()
 </script>
 <template>
