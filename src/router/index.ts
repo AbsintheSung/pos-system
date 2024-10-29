@@ -8,6 +8,7 @@ import CheckoutOrder from '@customer/checkout/views/CheckoutOrder.vue'
 import CheckoutPayment from '@customer/checkout/views/CheckoutPayment.vue'
 import CheckoutCompleted from '@customer/checkout/views/CheckoutCompleted.vue'
 import CheckoutLine from '@customer/checkout/views/CheckoutLine.vue'
+import StaffLogin from '@/views/front-of-the-house/StaffLogin .vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior() {
@@ -65,6 +66,11 @@ const router = createRouter({
       ],
       redirect: { name: 'CustomerMenu' }
     },
+    {
+      path: '/staff-login',
+      name: 'StaffLogin',
+      component: StaffLogin
+    }
 
   ]
 })
