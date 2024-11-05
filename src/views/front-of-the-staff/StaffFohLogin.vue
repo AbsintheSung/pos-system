@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStaffFohStore } from '@/stores/staff/foh/auth'
 import AnimeLoading from '@/components/global/AnimeLoading.vue'
 import AnimeCard from '@/components/global/AnimeCard.vue'
@@ -14,6 +14,7 @@ import LoadingImage_2 from '@/assets/images/loading/loading-2.png'
 import LoadingImage_3 from '@/assets/images/loading/loading-3.png'
 const staffFohStore = useStaffFohStore()
 const toast = useToast()
+const router = useRouter()
 const loadingImgs = [LoadingImage_1, LoadingImage_2, LoadingImage_3]
 const isLoading = ref(false)
 const staffLogin = ref({
@@ -26,11 +27,12 @@ const handleLogin = async () => {
     isLoading.value = true
     const resposneMes = await staffFohStore.fetchAuthData(staffLogin.value)
     toast.add({ severity: 'success', summary: '系統通知', detail: `${resposneMes}`, life: 1000 })
-    console.log('resposneMes', resposneMes)
+    isLoading.value = false
+    router.push('/staff-foh-home')
+    // console.log('resposneMes', resposneMes)
   } catch (error) {
-    console.log('resposneERRor', error)
+    // console.log('resposneERRor', error)
     toast.add({ severity: 'warn', summary: '系統通知', detail: `${error}`, life: 1000 })
-  } finally {
     isLoading.value = false
   }
 }
@@ -40,7 +42,8 @@ const handleLogin = async () => {
     <Toast
       position="top-center"
       :pt="{
-        messageicon: { class: '!hidden' },
+        messageContent: { class: 'flex' },
+        messageicon: { class: 'my-1 mx-2' },
         buttoncontainer: { class: 'hidden' }
       }"
     >

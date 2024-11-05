@@ -46,7 +46,6 @@ app.use(PrimeVue, {
 	},
 	pt: {
 		global: {
-			css:``
 			// 全域css設定
 			// css: `
 			// .p-datepicker-today > .custom-test {
