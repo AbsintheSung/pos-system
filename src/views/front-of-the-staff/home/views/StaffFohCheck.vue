@@ -3,13 +3,15 @@ import { computed, ref } from 'vue'
 import { useFohOrderStore } from '@/stores/staff/foh/order'
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import Dialog from 'primevue/dialog'
 import InputText from 'primevue/inputtext'
 import RadioButton from 'primevue/radiobutton'
 import Button from 'primevue/button'
 const route = useRoute()
 const router = useRouter()
 const fohOrderStore = useFohOrderStore()
-
+const isShowDialog = ref(false)
+const settleData = ref({}) //付款完成後，存放資訊
 const orderData = ref({
   orderId: route.params.orderId, // 訂單編號
   cash: null, //客人付的現金(int)
@@ -33,6 +35,9 @@ const paymentStatus = computed(() => {
   }
 })
 
+//核對是否大於金額
+const isCheck = computed(() => (orderData.value.cash - fohOrderStore.getDetailTotalAmount >= 0 ? true : false))
+
 //點擊 返回 staff-foh-home/order/all
 const handleBlack = () => {
   fohOrderStore.resetOrderDetail()
@@ -43,6 +48,7 @@ onMounted(async () => {
   if (!fohOrderStore.getIsDetail) return
   const orderId = route.params.orderId
   await fohOrderStore.fetchOrderDetail(orderId)
+  orderData.value.phone = fohOrderStore.getOrderDetail.phone
 })
 
 // ReceiptStates 枚舉
@@ -70,17 +76,53 @@ const handleOrderForm = () => {
   console.log(orderData.value)
 }
 const handleOrderCheck = async () => {
-  try {
-    const response = await fohOrderStore.fetchOrderCheckout(orderData.value)
-    // if (response.statusCode === 200) {
-    //   router.push('/staff-foh-home/order/all')
-    // }
-  } catch (error) {
-    console.log(error)
+  if (isCheck.value) {
+    //結清，可能需要找零或不需要
+    try {
+      const response = await fohOrderStore.fetchOrderCheckout(orderData.value)
+      settleData.value = response.checkoutData
+      isShowDialog.value = true
+    } catch (error) {
+      console.log(error)
+    }
+  } else {
+    //未結清，無法發送api
   }
+}
+const handleHideDialog = () => {
+  isShowDialog.value = false
+  router.push('/staff-foh-home/order/all')
 }
 </script>
 <template>
+  <Dialog v-model:visible="isShowDialog" modal pt:root:class="w-[410px]" @hide="handleHideDialog">
+    <template #header>
+      <h2 class="w-full text-center">結帳完成</h2>
+    </template>
+    <div class="flex flex-col gap-y-3">
+      <div class="flex flex-col gap-y-3">
+        <p>發票號碼 : {{ settleData.invoiceNumber }}</p>
+        <p>會員手機 : {{ settleData.phone || '無' }}</p>
+      </div>
+      <div class="flex items-center justify-between gap-x-8">
+        <div class="flex flex-col gap-y-2">
+          <h3>現金支付</h3>
+          <p>$ {{ settleData.cash }}</p>
+        </div>
+        <div class="flex flex-col gap-y-2">
+          <h3>找零</h3>
+          <p>$ {{ settleData.change }}</p>
+        </div>
+        <div class="flex flex-col gap-y-2">
+          <h3>新增點數</h3>
+          <div class="flex items-center justify-center">
+            <p class="w-5 h-5 bg-neutral-950 text-neutral-50 flex justify-center items-center rounded-full"><span>P</span></p>
+            <p>&nbsp;{{ settleData.point }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Dialog>
   <div class="h-full flex-grow flex flex-col px-6">
     <div class="-ms-3 flex items-center gap-x-6">
       <button @click="handleBlack">

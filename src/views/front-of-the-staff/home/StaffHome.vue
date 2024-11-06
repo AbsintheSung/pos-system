@@ -17,6 +17,8 @@ const route = useRoute()
 const router = useRouter()
 // 定義當前選中的狀態
 const currentType = ref('all') // 'all', 'dinein', 'takeout'
+// 控制按鈕是否可以點擊 ( 在結帳畫面，全部 內用 外帶，按鈕 不能點擊 )
+const filterButtonState = computed(() => (route.name === 'StaffFohCheckout' ? true : false))
 const routerName = computed(() => route.name)
 
 // 按鈕配置數據
@@ -69,18 +71,19 @@ watch(
             </button>
           </div>
           <div class="pt-36 flex flex-col items-center gap-y-6">
-            <button
+            <Button
               v-for="btn in buttons"
               :key="btn.type"
               @click="handleClick(btn.type)"
               :class="[
-                'py-3 px-5 rounded-3xl flex flex-col items-center gap-y-1',
+                'py-3 px-5 rounded-3xl flex flex-col items-center gap-y-1 border-0',
                 fohOrderStore.getOrderType === btn.type ? 'bg-black text-white' : 'bg-neutral-50 text-black'
               ]"
+              :disabled="filterButtonState"
             >
               <img :src="fohOrderStore.getOrderType === btn.type ? btn.darkIcon : btn.lightIcon" class="max-w-[45px]" />
               <p>{{ btn.text }}</p>
-            </button>
+            </Button>
           </div>
         </aside>
         <div class="flex w-full">

@@ -3,9 +3,7 @@ import { defineStore } from 'pinia'
 import { staffFetch } from '@/utils/apis/staff-foh/staffApiUrl'
 import { deepClone } from '@/utils/deepClone.ts';
 export const useFohOrderStore = defineStore('staff-foh-order', () => {
-  const currentPage = ref(0)
   const currentType = ref('all')
-  const isHandleCard = ref(false)
   const orders = ref({
     all: { data: [], totalCount: 0, totalPages: 0 },
     unpaid: { data: [], totalCount: 0, totalPages: 0 },
@@ -61,6 +59,7 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
       return total + (item.serving * item.price)
     }, 0)
   })
+
 
   // const fetchOrderPages = async () => {
   //   try {
@@ -120,12 +119,15 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
   }
 
   const fetchOrderCheckout = async (data) => {
+    console.log("測試data", data)
     try {
       const response = await staffFetch.orderCheck(data)
       console.log(response)
-      // if (response.statusCode === 200) {
-      //   return { ...response.statusCode, ...response.message, ...response.data }
-      // }
+      const checkoutData = response.data
+      const message = response.message
+      if (response.statusCode === 200) {
+        return { checkoutData, message }
+      }
     } catch (error) {
       console.log(error)
     }

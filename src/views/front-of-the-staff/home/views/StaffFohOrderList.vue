@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useFohOrderStore } from '@/stores/staff/foh/order'
+import noDetailImg from '@/assets/images/other/failcup.png'
 import Card from 'primevue/card'
 import Button from 'primevue/button'
 import Paginator from 'primevue/paginator'
@@ -16,12 +17,27 @@ import Select from 'primevue/select'
 const fohOrderStore = useFohOrderStore()
 const route = useRoute()
 const router = useRouter()
+const selectedCardId = ref(null) //控制是否選中卡片
 const statusColorMap = {
   待結帳: 'bg-error-200',
   準備中: 'bg-primary-300',
   待取餐: 'bg-tertiary-300',
   已完成: 'bg-neutral-200'
 }
+const buttonConfig = computed(() => {
+  switch (fohOrderStore.getOrderDetailStatus) {
+    case '待結帳':
+      return { text: '前往結帳', style: 'bg-primery-500 text-white', disabled: false }
+    case '準備中':
+      return { text: '準備中...', style: 'bg-primery-500 text-white', disabled: true }
+    case '待取餐':
+      return { text: '完成訂單', style: 'bg-primery-500 text-white', disabled: false }
+    case '已完成':
+      return { text: '已完成', style: 'bg-primery-500 text-white', disabled: true }
+    default:
+      return { text: '未知狀態', style: 'bg-primery-500 text-white', disabled: true }
+  }
+})
 const getStatusColor = (status) => statusColorMap[status]
 
 // 點擊切換頁面，獲取該頁的資料
@@ -30,6 +46,10 @@ const onPageChange = async (event) => {
   const requestPage = event.page + 1 // 後端需要的頁碼 ( 後端第一頁為:1 )
   await fohOrderStore.fetchOrderData(requestPage, route.params.status)
 }
+const isCardSelected = computed(() => {
+  // 判斷是否 為 null
+  return selectedCardId.value === null ? true : false
+})
 
 //透過 store 取得 每個狀態( 全部訂單、待結帳... )的總數量(物件)
 const orderCounts = computed(() => {
@@ -44,17 +64,24 @@ const orderCounts = computed(() => {
 
 //點擊卡片，發送獲取對應 id 單一資料api
 const handleCard = async (orderId) => {
-  console.log(orderId)
-  await fohOrderStore.fetchOrderDetail(orderId)
+  if (selectedCardId.value === orderId) {
+    selectedCardId.value = null
+    // 重置 store 中的訂單詳情數據
+    fohOrderStore.resetOrderDetail()
+  } else {
+    // 選中新卡片並獲取數據
+    await fohOrderStore.fetchOrderDetail(orderId)
+    selectedCardId.value = orderId
+  }
 }
 
 // 路由狀態，對應相對的 Tab -> select-router
 const orderStates = ref([
-  { route: '/staff-foh-home/order/all', label: '全部訂單', icon: 'pi pi-home', countKey: 'all' },
-  { route: '/staff-foh-home/order/unpaid', label: '待結帳', icon: 'pi pi-chart-line', countKey: 'unpaid' },
-  { route: '/staff-foh-home/order/preparing', label: '準備中', icon: 'pi pi-list', countKey: 'preparing' },
-  { route: '/staff-foh-home/order/ready', label: '待取餐', icon: 'pi pi-inbox', countKey: 'ready' },
-  { route: '/staff-foh-home/order/completed', label: '已完成', icon: 'pi pi-inbox', countKey: 'completed' }
+  { route: '/staff-foh-home/order/all', label: '全部訂單', icon: 'pi pi-home', countKey: 'all', backgroundColor: 'bg-neutral-950' },
+  { route: '/staff-foh-home/order/unpaid', label: '待結帳', icon: 'pi pi-chart-line', countKey: 'unpaid', backgroundColor: 'bg-error-300' },
+  { route: '/staff-foh-home/order/preparing', label: '準備中', icon: 'pi pi-list', countKey: 'preparing', backgroundColor: 'bg-primary-300' },
+  { route: '/staff-foh-home/order/ready', label: '待取餐', icon: 'pi pi-inbox', countKey: 'ready', backgroundColor: 'bg-tertiary-300' },
+  { route: '/staff-foh-home/order/completed', label: '已完成', icon: 'pi pi-inbox', countKey: 'completed', backgroundColor: 'bg-neutral-300' }
 ])
 
 // 計算屬性：根據當前狀態自動更新數據
@@ -65,6 +92,8 @@ watch(
   async () => {
     await fohOrderStore.fetchOrderPages()
     await fohOrderStore.fetchOrderData('', route.params.status) //先取得前9筆
+    selectedCardId.value = null
+    fohOrderStore.resetOrderDetail()
   }
 )
 
@@ -75,13 +104,36 @@ onMounted(async () => {
 })
 
 const handleOrderBtn = () => {
-  if (fohOrderStore.getOrderDetailStatus === '待結帳') {
-    console.log('前往付款', fohOrderStore.getIsDetail)
+  // if (fohOrderStore.getOrderDetailStatus === '待結帳') {
+  //   console.log('前往付款', fohOrderStore.getIsDetail)
 
-    router.push(`/staff-foh-home/checkout/${fohOrderStore.getOrderDetailId}`)
-  }
-  if (fohOrderStore.getOrderDetailStatus === '準備中') {
-    console.log('準備中-按鈕不給按')
+  //   router.push(`/staff-foh-home/checkout/${fohOrderStore.getOrderDetailId}`)
+  // }
+  // if (fohOrderStore.getOrderDetailStatus === '準備中') {
+  //   console.log('準備中-按鈕不給按')
+  // }
+  const status = fohOrderStore.getOrderDetailStatus
+  switch (status) {
+    case '待結帳':
+      // 執行結帳操作
+      console.log('執行結帳操作')
+      router.push(`/staff-foh-home/checkout/${fohOrderStore.getOrderDetailId}`)
+      break
+    case '準備中':
+      // 執行準備中操作，例如提醒廚房準備
+      console.log('提醒廚房準備')
+      break
+    case '待取餐':
+      // 執行取餐操作，例如標記為已取餐
+      console.log('標記為已取餐')
+      break
+    case '已完成':
+      // 已完成操作，例如顯示已完成提醒
+      console.log('訂單已完成')
+      break
+    default:
+      console.log('未知狀態操作')
+      break
   }
 }
 
@@ -109,7 +161,7 @@ const paginatedItems = computed(() => {
 })
 </script>
 <template>
-  <div class="flex flex-col">
+  <div class="flex-grow flex flex-col">
     <div class="p-4 flex items-center gap-x-7 w-full">
       <div class="w-full flex items-center gap-x-2">
         <label class="whitespace-nowrap">排序依據</label>
@@ -130,11 +182,19 @@ const paginatedItems = computed(() => {
     <div class="flex flex-col">
       <Tabs :value="nowOrderState">
         <TabList>
-          <Tab v-for="tab in orderStates" :key="tab.label" :value="tab.route" pt:root:class="flex-grow bg-primary-50">
+          <Tab v-for="tab in orderStates" :key="tab.label" :value="tab.route" pt:root:class="flex-grow bg-primary-50 p-0">
             <router-link v-if="tab.route" :to="tab.route">
-              <a class="flex items-center gap-2">
-                <span>{{ tab.label }}</span>
-                <Badge :value="orderCounts[tab.countKey]" size="large" severity="warn" class="bg-primary-300" pt:root:class="w-7 h-7 rounded-full" />
+              <a class="block p-3">
+                <div class="flex justify-center items-center gap-2">
+                  <span>{{ tab.label }}</span>
+                  <Badge
+                    :value="orderCounts[tab.countKey]"
+                    size="large"
+                    severity="warn"
+                    :class="tab.backgroundColor"
+                    pt:root:class="w-7 h-7 rounded-full"
+                  />
+                </div>
               </a>
             </router-link>
           </Tab>
@@ -146,7 +206,10 @@ const paginatedItems = computed(() => {
         <Card
           v-for="orderItem in fohOrderStore.getOrderListData"
           :key="orderItem.orderId"
-          class="border-neutral-950 border shadow-none"
+          :class="[
+            'border-neutral-950 border shadow-none',
+            { 'ring-4 ring-primary-700 border-0 border-transparent': selectedCardId === orderItem.orderId }
+          ]"
           :pt:header:class="`p-4 rounded-t-xl ${getStatusColor(orderItem.orderStatus)}`"
           pt:body:class="p-4"
           @click="handleCard(orderItem.orderId)"
@@ -195,8 +258,12 @@ const paginatedItems = computed(() => {
   </div>
 
   <div class="w-[360px] flex flex-col border border-neutral-950 bg-neutral-50">
-    <h2 class="mb-auto w-full py-3 text-center text-neutral-50 bg-primary-700">訂單詳細資訊</h2>
-    <div class="py-4 px-6 text-2xl flex flex-col items-center gap-y-3 h-full">
+    <h2 class="w-full py-3 text-center text-neutral-50 bg-primary-700">訂單詳細資訊</h2>
+    <div v-show="isCardSelected" class="h-full flex flex-col items-center justify-center">
+      <img :src="noDetailImg" class="w-2/3 max-w-full" alt="無明細資料圖" />
+      <p class="text-center mt-4">尚未選取訂單</p>
+    </div>
+    <div v-show="!isCardSelected" class="py-4 px-6 text-2xl flex flex-col items-center gap-y-3 h-full">
       <div class="w-full flex justify-between items-center">
         <h3 class="font-bold text-2xl">{{ fohOrderStore.getOrderDetail.typeAndNumber }}</h3>
         <span class="ms-auto text-xl">{{ fohOrderStore.getOrderDetail.orderStatus }}</span>
@@ -239,7 +306,9 @@ const paginatedItems = computed(() => {
       </div>
       <div class="w-full flex flex-nowrap gap-x-4">
         <Button class="w-1/3 py-1 rounded-3xl text-neutral-950 bg-neutral-50 border border-neutral-400">取消訂單</Button>
-        <Button class="w-2/3 py-1 rounded-3xl" @click="handleOrderBtn">完成訂單</Button>
+        <Button :class="`w-2/3 py-1 rounded-3xl ${buttonConfig.style}`" :disabled="buttonConfig.disabled" @click="handleOrderBtn">
+          {{ buttonConfig.text }}
+        </Button>
       </div>
     </div>
   </div>
