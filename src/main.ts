@@ -9,6 +9,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura' //目前PrimeVue提供的預設主題之一
 import Lara from '@primevue/themes/lara' //目前PrimeVue提供的預設主題之一
 import Nora from '@primevue/themes/nora' //目前PrimeVue提供的預設主題之一
+import ToastService from 'primevue/toastservice';
 import { definePreset } from '@primevue/themes'; //配置 客製化設定
 
 const MyCustom = definePreset(Aura, {
@@ -61,5 +62,5 @@ app.use(PrimeVue, {
 
 app.use(createPinia())
 app.use(router)
-
+app.use(ToastService)
 app.mount('#app')
