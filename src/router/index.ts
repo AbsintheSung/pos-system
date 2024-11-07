@@ -14,6 +14,8 @@ import StaffFohLogin from '@/views/front-of-the-staff/StaffFohLogin.vue'
 import StaffHome from '@/views/front-of-the-staff/home/StaffHome.vue'
 import StaffFohOrderList from '@/views/front-of-the-staff/home/views/StaffFohOrderList.vue'
 import StaffFohCheckout from '@/views/front-of-the-staff/home/views/StaffFohCheck.vue'
+import StaffBohLogin from '@/views/back-of-the-staff/StaffBohLogin.vue'
+import StaffBohHome from '@/views/back-of-the-staff/StaffBohHome.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior() {
@@ -107,7 +109,17 @@ const router = createRouter({
 
         }
       ],
-    }
+    },
+    {
+      path: '/staff-boh-login',
+      name: 'StaffBohLogin',
+      component: StaffBohLogin
+    },
+    {
+      path: '/staff-boh-home',
+      name: 'StaffBohHome',
+      component: StaffBohHome
+    },
 
   ]
 })
