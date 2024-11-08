@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { staffFetch } from '@/utils/apis/staff-foh/staffApiUrl'
 import { deepClone } from '@/utils/deepClone.ts';
 export const useFohOrderStore = defineStore('staff-foh-order', () => {
-  const currentType = ref('all')
+  const orderCategory = ref('all')
   const orders = ref({
     all: { data: [], totalCount: 0, totalPages: 0 },
     unpaid: { data: [], totalCount: 0, totalPages: 0 },
@@ -22,7 +22,7 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
     ready: 4,
     completed: 5,
   }
-  const currentTypeMap = {
+  const orderCategoryMap = {
     all: '全部訂單',
     dinein: '內用',
     takeout: '外帶'
@@ -30,8 +30,8 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
 
   const getOrder = computed(() => deepClone(orders.value))
   const getOrderListData = computed(() => orderListData.value.map(item => item))
-  const getOrderType = computed(() => currentType.value)
-  const getOrderTypeRequest = computed(() => currentTypeMap[currentType.value]) //取得要傳遞給後端Type格式 ( all-> 全部訂單 )
+  const getOrderType = computed(() => orderCategory.value)
+  const getOrderTypeRequest = computed(() => orderCategoryMap[orderCategory.value]) //取得要傳遞給後端Type格式 ( all-> 全部訂單 )
   const getIsDetail = computed(() => Object.keys(orderDetail.value).length === 0 ? true : false) // 判斷是否有資料，true為沒資料
   const getOrderDetail = computed(() => {
     if (Object.keys(orderDetail.value).length === 0) {
@@ -73,6 +73,8 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
   //     console.log(error)
   //   }
   // }
+
+  //從後端 獲取總數量以及頁數
   const fetchOrderPages = async () => {
     try {
       const promises = Object.entries(statusMap).map(async ([key, status]) => {
@@ -93,12 +95,13 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
     }
   }
 
+  //從後端獲取資料 ( 傳入相對應的，參數，未傳遞的話為全部資料 )
   const fetchOrderData = async (page, order, type, orderBy, search) => {
     const orderStatus = statusMap[order]
     try {
       const response = await staffFetch.orderData(page, orderStatus, type, orderBy, search)
-      const test = await staffFetch.orderAllData()
-      console.log('test', test)
+      // const test = await staffFetch.orderAllData()
+      // console.log('test', test)
       orderListData.value = response.data
       console.log('資料', response)
     } catch (error) {
@@ -106,6 +109,7 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
     }
   }
 
+  //從後端獲取 單一資料
   const fetchOrderDetail = async (id) => {
     try {
       const response = await staffFetch.orderDetail(id)
@@ -118,6 +122,7 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
     }
   }
 
+  //發送 完成結帳 api
   const fetchOrderCheckout = async (data) => {
     console.log("測試data", data)
     try {
@@ -133,8 +138,29 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
     }
   }
 
-  const setType = (type) => {
-    currentType.value = type
+  //發送完成訂單
+  const fetchOrderComplete = async () => {
+    const orderId = {
+      orderId: orderDetail.value.orderId
+    }
+    try {
+      const response = await staffFetch.orderComplete(orderId)
+      console.log(response)
+      if (response.statusCode === 200) {
+        await fetchOrderPages()
+        await fetchOrderData('', 'ready')
+        resetOrderDetail()
+        return response
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    // console.log(orderDetail.value.orderId)
+  }
+
+  //修改
+  const setOrderCategory = (type) => {
+    orderCategory.value = type
   }
 
   const resetOrderDetail = () => {
@@ -161,9 +187,10 @@ export const useFohOrderStore = defineStore('staff-foh-order', () => {
     fetchOrderPages,
     fetchOrderData,
     fetchOrderDetail,
-    setType,
+    setOrderCategory,
     resetOrderDetail,
     handleOrderForm,
     fetchOrderCheckout,
+    fetchOrderComplete
   }
 })

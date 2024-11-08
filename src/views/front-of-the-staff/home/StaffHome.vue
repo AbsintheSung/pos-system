@@ -45,7 +45,7 @@ const buttons = [
 
 // 切換按鈕狀態
 const handleClick = async (type) => {
-  fohOrderStore.setType(type)
+  fohOrderStore.setOrderCategory(type)
   await fohOrderStore.fetchOrderData('1', route.params.status, fohOrderStore.getOrderTypeRequest)
   console.log(fohOrderStore.getOrderTypeRequest)
 }

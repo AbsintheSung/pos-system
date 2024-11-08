@@ -103,7 +103,7 @@ onMounted(async () => {
   await fohOrderStore.fetchOrderData('', route.params.status) //先取得前9筆
 })
 
-const handleOrderBtn = () => {
+const handleOrderBtn = async () => {
   // if (fohOrderStore.getOrderDetailStatus === '待結帳') {
   //   console.log('前往付款', fohOrderStore.getIsDetail)
 
@@ -126,6 +126,8 @@ const handleOrderBtn = () => {
     case '待取餐':
       // 執行取餐操作，例如標記為已取餐
       console.log('標記為已取餐')
+      await fohOrderStore.fetchOrderComplete()
+      // router.push(`/staff-foh-home/order/all`)
       break
     case '已完成':
       // 已完成操作，例如顯示已完成提醒
