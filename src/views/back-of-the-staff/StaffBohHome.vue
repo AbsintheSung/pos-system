@@ -143,8 +143,10 @@ const selectedCity = ref(null)
             >
               <template #header>
                 <Button class="px-28 py-3 rounded-3xl bg-primary-700 text-nowrap" :disabled="isBtnloading" @click="handleFinish(orderItem.orderId)">
-                  <p>完成備餐</p>
-                  <i v-show="isBtnloading" class="pi pi-spin pi-spinner"></i>
+                  <div class="relative">
+                    <p>完成備餐</p>
+                    <i v-show="isBtnloading" class="pi pi-spin pi-spinner absolute top-1.5 -right-6"></i>
+                  </div>
                 </Button>
               </template>
               <template #title>
