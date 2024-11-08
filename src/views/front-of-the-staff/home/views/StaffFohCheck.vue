@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useFohOrderStore } from '@/stores/staff/foh/order'
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -45,6 +45,7 @@ const handleBlack = () => {
 }
 
 onMounted(async () => {
+  orderData.value.phone = fohOrderStore.getOrderDetail.phone
   if (!fohOrderStore.getIsDetail) return
   const orderId = route.params.orderId
   await fohOrderStore.fetchOrderDetail(orderId)
